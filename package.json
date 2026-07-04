@@ -1,0 +1,22 @@
+{
+  "name": "phongvu",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "type": "module",
+  "scripts": {
+    "deploy": "vercel --prod",
+    "vercel:dev": "vercel dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.110.0",
+    "openai": "^6.45.0"
+  },
+  "devDependencies": {
+    "vercel": "^54.20.1"
+  }
+}

@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PhongVu.vn | Laptop, PC, Màn hình</title>
+  <meta name="description" content="Trang frontend mô phỏng Phong Vũ với khuyến mãi, danh mục, banner và sản phẩm.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <section class="birthday-banner art-banner" aria-label="Khuyến mãi sinh nhật">
+      <img src="assets/images/sữa lỗi 1/Screenshot 2026-07-03 213002.png" alt="Bớt giá đầy deal 29 năm">
+    </section>
+
+    <nav class="utility-nav" aria-label="Thanh điều hướng nhanh">
+      <div class="container utility-scroll">
+        <div class="utility-links">
+          <a href="#"><span>⌂</span>Hệ thống Showroom</a>
+          <a href="#"><span>▣</span>Dành Cho Doanh Nghiệp</a>
+          <a href="#"><span></span>Apple Education</a>
+          <a href="#"><span>☎</span>Hotline: 18006867</a>
+          <a href="#"><span>▤</span>Tin công nghệ</a>
+          <a href="#"><span>⚙</span>Xây dựng cấu hình</a>
+          <a href="#"><span>%</span>Khuyến mãi</a>
+        </div>
+        <button class="language-toggle" type="button" aria-label="Switch language" aria-pressed="false">
+          <span>VI</span><i></i><span>EN</span>
+        </button>
+      </div>
+    </nav>
+
+    <header class="site-header">
+      <div class="container header-layout">
+        <a class="brand-mark image-brand" href="#" aria-label="Phong Vũ">
+          <img src="assets/images/logos/logo.svg" alt="">
+        </a>
+
+        <button class="category-button" type="button">
+          <span class="menu-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+          Danh mục sản phẩm
+        </button>
+
+        <div class="search-panel">
+          <form class="search-form">
+            <input type="search" placeholder="Bạn muốn mua gì hôm nay..." aria-label="Tìm kiếm sản phẩm">
+            <button type="submit" aria-label="Tìm kiếm">⌕</button>
+          </form>
+          <div class="keyword-row" aria-label="Từ khóa gợi ý">
+            <a href="#">MacBook Air M5</a>
+            <a href="#">MacBook Neo</a>
+            <a href="#">iPhone 17</a>
+            <a href="#">Laptop</a>
+            <a href="#">Màn Hình</a>
+            <a href="#">VGA</a>
+            <a href="#">Build PC</a>
+            <a href="#">Back to school</a>
+          </div>
+        </div>
+
+        <div class="account-actions">
+          <a class="icon-text" href="#">
+            <span class="avatar-icon" aria-hidden="true"></span>
+            <span>Đăng nhập<br>Đăng ký</span>
+          </a>
+          <a class="round-icon" href="#" aria-label="Thông báo"><span class="bell-icon" aria-hidden="true"></span></a>
+          <a class="icon-text" href="#">
+            <span class="cart-icon" aria-hidden="true"></span>
+            <span>Giỏ hàng của bạn<br>(0) sản phẩm</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <div class="container">
+        <section class="hero-layout" aria-label="Khuyến mãi chính">
+          <aside class="category-menu" aria-label="Danh mục sản phẩm">
+            <a href="#" data-menu="laptop"><span>▭</span>Laptop</a>
+            <a href="#" data-menu="apple"><span>⌘</span>Sản phẩm Apple</a>
+            <a href="#" data-menu="appliance"><span>▣</span>Điện máy</a>
+            <a href="#" data-menu="home"><span>▥</span>Điện gia dụng</a>
+            <a href="#" data-menu="pc"><span>▤</span>PC - Máy tính bàn</a>
+            <a href="#" data-menu="monitor"><span>▱</span>Màn hình máy tính</a>
+            <a href="#" data-menu="components"><span>▧</span>Linh kiện máy tính</a>
+            <a href="#" data-menu="computer-accessories"><span>⌨</span>Phụ kiện máy tính</a>
+            <a href="#" data-menu="gaming"><span>♜</span>Gaming Gear</a>
+            <a href="#" data-menu="mobile"><span>▯</span>Điện thoại, Tablet, Phụ...</a>
+            <a href="#" data-menu="accessories"><span>▰</span>Phụ kiện</a>
+            <a href="#" data-menu="audio"><span>◴</span>Thiết bị âm thanh</a>
+            <a href="#" data-menu="office"><span>▦</span>Thiết bị văn phòng</a>
+            <a href="#" data-menu="business"><span>⌁</span>Giải pháp doanh nghiệp</a>
+            <a href="#" data-menu="clearance"><span>◈</span>Hàng thanh lý</a>
+          </aside>
+
+          <div class="mega-menu" id="categoryMegaMenu" aria-label="Danh mục sản phẩm mở rộng" aria-hidden="true"></div>
+
+          <section class="promo-column">
+            <article class="main-slider reveal is-visible" aria-label="Banner khuyến mãi">
+              <div class="slider-viewport">
+                <img class="slider-image is-active" data-slide-image="active" src="assets/images/banners/unnamed (3).webp" alt="Bớt giá đầy deal 29 năm">
+                <img class="slider-image" data-slide-image="next" src="assets/images/banners/unnamed (6).webp" alt="" aria-hidden="true">
+              </div>
+              <button class="slider-arrow prev" type="button" aria-label="Banner trước">‹</button>
+              <button class="slider-arrow next" type="button" aria-label="Banner sau">›</button>
+              <div class="slider-dots" aria-label="Chọn banner">
+                <button class="active" type="button" aria-label="Banner sinh nhật"></button>
+                <button type="button" aria-label="Banner Acer"></button>
+                <button type="button" aria-label="Banner MacBook"></button>
+                <button type="button" aria-label="Banner MSI"></button>
+                <button type="button" aria-label="Banner Lenovo"></button>
+                <button type="button" aria-label="Banner bóng đá"></button>
+              </div>
+            </article>
+
+            <div class="mini-promo-grid">
+              <a class="mini-promo image-tile reveal" href="#">
+                <img src="assets/images/products/unnamed (7).webp" alt="Build PC giảm thêm tới 2 triệu" loading="lazy">
+              </a>
+              <a class="mini-promo image-tile reveal" href="#">
+                <img src="assets/images/products/unnamed.webp" alt="Laptop Gaming RTX 4050 chỉ từ 24.990 triệu" loading="lazy">
+              </a>
+              <a class="mini-promo image-tile reveal" href="#">
+                <img src="assets/images/products/unnamed (1).webp" alt="iPhone 17 Pro Max chỉ từ 35.990 triệu" loading="lazy">
+              </a>
+              <a class="mini-promo image-tile reveal" href="#">
+                <img src="assets/images/products/unnamed (2).webp" alt="Màn hình OLED giá chỉ từ 12 triệu" loading="lazy">
+              </a>
+            </div>
+          </section>
+
+          <aside class="right-banner-list" aria-label="Banner bên phải">
+            <a class="vertical-banner image-banner edu-card reveal" href="#">
+              <img src="assets/images/products/unnamed.gif" alt="Phong Vũ EDU" loading="lazy">
+            </a>
+            <a class="vertical-banner month month-fallback reveal" href="#">
+              <span>Khuyến mãi<br>tháng này</span>
+              <strong>Quà tặng<br>hấp dẫn</strong>
+            </a>
+          </aside>
+        </section>
+
+        <section class="hot-deals reveal" aria-label="Ưu đãi hot">
+          <h2>Ưu đãi hot</h2>
+          <div class="hot-deal-grid image-badge-grid">
+            <a href="#"><img src="assets/images/products/unnamed (1).gif" alt="" loading="lazy">Giờ vàng giá sốc</a>
+            <a href="#"><img src="assets/images/products/unnamed (2).gif" alt="" loading="lazy">Sinh nhật siêu deal</a>
+            <a href="#"><img src="assets/images/products/unnamed (3).gif" alt="" loading="lazy">Máy lạnh</a>
+            <a href="#"><img src="assets/images/products/unnamed (4).gif" alt="" loading="lazy">Trả góp 0%</a>
+            <a href="#"><img src="assets/images/products/unnamed (5).gif" alt="" loading="lazy">Apple Education</a>
+            <a href="#"><img src="assets/images/products/unnamed (6).gif" alt="" loading="lazy">Tải app Phong Vũ</a>
+            <a href="#"><img src="assets/images/products/unnamed (7).gif" alt="" loading="lazy">Xả kho trưng bày</a>
+          </div>
+        </section>
+
+        <section class="shopping-strip banner-strip reveal" aria-label="Dải ưu đãi hè">
+          <img src="assets/images/banners/unnamed (2).webp" alt="Hè 2K8 show điểm giảm sâu" loading="lazy">
+        </section>
+
+        <section class="flash-sale-section reveal" aria-label="Flash sale online">
+          <div class="deal-tabs">
+            <a class="active" href="#"><strong>Laptop</strong><span>Coupon Đến 1TR</span></a>
+            <a href="#"><strong>Gear</strong><span>Giảm Đến 56%</span></a>
+            <a href="#"><strong>Màn Hình</strong><span>Giảm Tới 21%</span></a>
+            <a href="#"><strong>Máy In &amp; Mực</strong><span>Giảm Đến 32%</span></a>
+            <a href="#"><strong>Camera-Phụ Kiện</strong><span>Giảm Sốc Đến 55%</span></a>
+          </div>
+
+          <div class="flash-panel">
+            <aside class="flash-info">
+              <div class="flash-logo">⚡<strong>Flashsale</strong><span>Online</span></div>
+              <p>Kết thúc sau 2 ngày</p>
+              <div class="countdown" aria-label="Đếm ngược flash sale">
+                <b>04</b><b>26</b><b>08</b>
+              </div>
+              <small>Số lượng có hạn</small>
+              <a href="#">Mua ngay kẻo hết</a>
+            </aside>
+
+            <div class="product-row" data-limit-text="*Giới hạn 01 sản phẩm / 1 khách hàng trong chương trình">
+              <article class="product-card">
+                <button class="heart" type="button" aria-label="Yêu thích">♡</button>
+                <img src="assets/images/categories/unnamed (3).webp" alt="Laptop Acer Aspire Go 15" loading="lazy">
+                <span class="save-label">Tiết kiệm 5.000.000 đ</span>
+                <b>ACER</b>
+                <h3>Laptop Acer Aspire Go 15 AG15-72P-54GY Core 5...</h3>
+                <em>COMBO GIẢM ~ 50.000 đ</em>
+                <strong>19.990.000 đ</strong>
+                <del>24.990.000 đ</del>
+                <ul><li>Core 5 120U</li><li>16GB RAM</li><li>512GB SSD</li><li>15.6" Full HD</li></ul>
+                <button type="button">Thêm vào giỏ</button>
+              </article>
+
+              <article class="product-card">
+                <button class="heart" type="button" aria-label="Yêu thích">♡</button>
+                <img src="assets/images/categories/unnamed.webp" alt="Laptop HP 14" loading="lazy">
+                <span class="save-label">Tiết kiệm 4.000.000 đ</span>
+                <b>HP</b>
+                <h3>Laptop HP 14-ep1007TU-9Z2W1PA Core 7 150U/...</h3>
+                <em>COMBO GIẢM ~ 50.000 đ</em>
+                <strong>23.990.000 đ</strong>
+                <del>27.990.000 đ</del>
+                <ul><li>Core 7 150U</li><li>16GB RAM</li><li>512GB SSD</li><li>14" Full HD</li></ul>
+                <button type="button">Thêm vào giỏ</button>
+              </article>
+
+              <article class="product-card">
+                <button class="heart" type="button" aria-label="Yêu thích">♡</button>
+                <img src="assets/images/categories/unnamed (1).webp" alt="Laptop Acer Nitro Lite 16" loading="lazy">
+                <span class="save-label">Tiết kiệm 5.100.000 đ</span>
+                <b>ACER</b>
+                <h3>Laptop Acer Nitro Lite 16 NL16-71G-56WQ i5...</h3>
+                <em>COMBO GIẢM ~ 50.000 đ</em>
+                <strong>24.490.000 đ</strong>
+                <del>29.590.000 đ</del>
+                <ul><li>i5-13420H</li><li>RTX 3050</li><li>16GB RAM</li><li>16" WUXGA</li></ul>
+                <button type="button">Thêm vào giỏ</button>
+              </article>
+
+              <article class="product-card">
+                <button class="heart" type="button" aria-label="Yêu thích">♡</button>
+                <img src="assets/images/categories/unnamed (2).webp" alt="Laptop Acer Nitro ProPanel" loading="lazy">
+                <span class="save-label">Tiết kiệm 3.000.000 đ</span>
+                <b>ACER</b>
+                <h3>Laptop Acer Nitro ProPanel ANV15-51-56D5 i5...</h3>
+                <em>COMBO GIẢM ~ 50.000 đ</em>
+                <strong>24.990.000 đ</strong>
+                <del>27.990.000 đ</del>
+                <ul><li>i5-13420H</li><li>RTX 3050</li><li>512GB SSD</li><li>144Hz</li></ul>
+                <button type="button">Thêm vào giỏ</button>
+              </article>
+
+              <article class="product-card">
+                <button class="heart" type="button" aria-label="Yêu thích">♡</button>
+                <img src="assets/images/categories/unnamed (4).webp" alt="Laptop Dell 16" loading="lazy">
+                <span class="save-label">Tiết kiệm 2.200.000 đ</span>
+                <b>DELL</b>
+                <h3>Laptop Dell 16 DC16250-C7U161W11BLU Core 7...</h3>
+                <em>COMBO GIẢM ~ 50.000 đ</em>
+                <strong>27.690.000 đ</strong>
+                <del>29.890.000 đ</del>
+                <ul><li>Core 7 150U</li><li>Intel Graphics</li><li>16GB RAM</li><li>16" WUXGA</li></ul>
+                <button type="button">Thêm vào giỏ</button>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="featured-categories reveal" aria-label="Danh mục nổi bật">
+          <h2>Danh mục nổi bật</h2>
+          <div class="featured-grid">
+            <a href="#"><span>▱</span>Laptop</a>
+            <a href="#"><span></span>Apple</a>
+            <a href="#"><span>▯</span>PC</a>
+            <a href="#"><span>▧</span>Linh Kiện</a>
+            <a href="#"><span>▭</span>Màn Hình</a>
+            <a href="#"><span>◴</span>Phụ Kiện</a>
+            <a href="#"><span>⌁</span>Thiết Bị Mạng</a>
+            <a href="#"><span>▤</span>Thiết Bị An Ninh</a>
+            <a href="#"><span>▣</span>Thiết Bị Văn Phòng</a>
+            <a href="#"><span>◈</span>Điện Máy - Điện Gia Dụng</a>
+          </div>
+        </section>
+
+        <section class="wide-promo reveal" aria-label="Banner laptop gaming">
+          <img src="assets/images/floating-ads/unnamed.webp" alt="Laptop Gaming RTX 4050 chỉ từ 24.990 triệu" loading="lazy">
+        </section>
+
+        <section class="product-shelf blue-shelf reveal" aria-label="Laptop AI">
+          <div class="shelf-head">
+            <h2>Laptop AI</h2>
+            <a href="#">Xem tất cả ›</a>
+          </div>
+          <div class="shelf-grid">
+            <article class="product-card">
+              <button class="heart" type="button" aria-label="Yêu thích">♡</button>
+              <img src="assets/images/categories/unnamed (3).webp" alt="Laptop Asus Vivobook 16" loading="lazy">
+              <span class="save-label">Tiết kiệm 4.500.000 đ</span>
+              <b>ASUS</b>
+              <h3>Laptop Asus Vivobook 16 X1607CA-MB980W Ultra 5...</h3>
+              <em>COMBO GIẢM ~ 50.000 đ</em>
+              <strong>21.490.000 đ</strong>
+              <del>25.990.000 đ</del>
+              <button type="button">Thêm vào giỏ</button>
+            </article>
+            <article class="product-card">
+              <button class="heart" type="button" aria-label="Yêu thích">♡</button>
+              <img src="assets/images/categories/unnamed.webp" alt="Laptop HP Omnibook" loading="lazy">
+              <span class="save-label">Tiết kiệm 3.000.000 đ</span>
+              <b>HP</b>
+              <h3>Laptop HP Omnibook 5 16-af1048TU-BZ7Q9PA...</h3>
+              <em>COMBO GIẢM ~ 50.000 đ</em>
+              <strong>25.990.000 đ</strong>
+              <del>28.990.000 đ</del>
+              <button type="button">Thêm vào giỏ</button>
+            </article>
+            <article class="product-card">
+              <button class="heart" type="button" aria-label="Yêu thích">♡</button>
+              <img src="assets/images/categories/unnamed (1).webp" alt="Laptop Lenovo IdeaPad Slim 5" loading="lazy">
+              <span class="save-label">Tiết kiệm 8.000.000 đ</span>
+              <b>LENOVO</b>
+              <h3>Laptop Lenovo IdeaPad Slim 5 14IMH10 Windows 11...</h3>
+              <em>COMBO GIẢM ~ 50.000 đ</em>
+              <strong>23.990.000 đ</strong>
+              <del>31.990.000 đ</del>
+              <button type="button">Thêm vào giỏ</button>
+            </article>
+            <article class="product-card">
+              <button class="heart" type="button" aria-label="Yêu thích">♡</button>
+              <img src="assets/images/categories/unnamed (2).webp" alt="Laptop Acer Aspire AI" loading="lazy">
+              <span class="save-label">Tiết kiệm 2.000.000 đ</span>
+              <b>ACER</b>
+              <h3>Laptop Acer Aspire 14 AI A14-52M-71YQ Ultra 7...</h3>
+              <em>COMBO GIẢM ~ 50.000 đ</em>
+              <strong>27.990.000 đ</strong>
+              <button type="button">Thêm vào giỏ</button>
+            </article>
+            <article class="product-card">
+              <button class="heart" type="button" aria-label="Yêu thích">♡</button>
+              <img src="assets/images/categories/unnamed (4).webp" alt="Laptop MSI Modern 15" loading="lazy">
+              <span class="save-label">Tiết kiệm 1.500.000 đ</span>
+              <b>MSI</b>
+              <h3>Laptop MSI Modern 15 H AI C2HMG-220VN Ultra 7...</h3>
+              <em>COMBO GIẢM ~ 50.000 đ</em>
+              <strong>23.990.000 đ</strong>
+              <button type="button">Thêm vào giỏ</button>
+            </article>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <aside class="side-float left image-side-ad" aria-label="Tivi chuẩn nét">
+      <img src="assets/images/floating-ads/unnamed.png" alt="Tivi chuẩn nét giảm đến 50%">
+    </aside>
+
+    <aside class="side-float right image-side-ad" aria-label="Bảo hành toàn diện">
+      <img src="assets/images/floating-ads/unnamed (1).png" alt="Bảo hành toàn diện">
+    </aside>
+
+    <button class="back-top" type="button" aria-label="Lên đầu trang">⌃</button>
+
+    <div class="contact-float" aria-label="Liên hệ nhanh">
+      <a class="phone-link" href="tel:18006867">1800 6867 <span aria-hidden="true">☎</span></a>
+      <a href="#" aria-label="Zalo">Zalo</a>
+      <button class="assistant-link assistant-toggle" type="button" aria-label="Trò chuyện với trợ lý ảo" aria-expanded="false" aria-controls="assistantChatPanel">
+        <img src="assets/images/logos/logo.svg" alt="">
+      </button>
+      <b>Trò chuyện với<br>trợ lý ảo</b>
+      <section class="assistant-chat" id="assistantChatPanel" aria-label="Trò chuyện với trợ lý ảo" aria-hidden="true">
+        <header>
+          <span><img src="assets/images/logos/logo.svg" alt=""></span>
+          <div>
+            <strong>Phong Vũ</strong>
+            <small>Trợ lý ảo luôn sẵn sàng</small>
+          </div>
+          <button class="assistant-close" type="button" aria-label="Đóng">×</button>
+        </header>
+        <div class="assistant-chat-body" aria-live="polite">
+          <p class="chat-message bot">Xin chào! Tôi có thể giúp bạn tìm laptop, PC hoặc khuyến mãi phù hợp.</p>
+          <div class="chat-suggestions">
+            <button type="button">Tư vấn laptop</button>
+            <button type="button">Tìm khuyến mãi</button>
+            <button type="button">Hỗ trợ đơn hàng</button>
+          </div>
+        </div>
+        <form class="assistant-chat-form">
+          <input type="text" placeholder="Nhập nội dung..." aria-label="Nhập nội dung chat">
+          <button type="submit" aria-label="Gửi tin nhắn">➤</button>
+        </form>
+      </section>
+    </div>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
