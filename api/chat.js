@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import OpenAI from "openai";
 import { createClient } from "@supabase/supabase-js";
+import { findFaqAnswer } from "../data/chatbot-faq.js";
 
 const systemPrompt = `
 Ban la tro ly ao cua Phong Vu. Hay tra loi bang tieng Viet, ngan gon,
@@ -43,7 +44,7 @@ function sendJson(res, status, data) {
 }
 
 async function saveMessage(supabase, sessionId, role, content) {
-  if (!sessionId) return;
+  if (!supabase || !sessionId) return;
 
   const { error } = await supabase.from("chat_messages").insert({
     session_id: sessionId,
@@ -56,34 +57,28 @@ async function saveMessage(supabase, sessionId, role, content) {
   }
 }
 
+async function createSession(supabase) {
+  if (!supabase) return null;
+
+  const { data, error } = await supabase
+    .from("chat_sessions")
+    .insert({})
+    .select("id")
+    .single();
+
+  if (error) {
+    console.warn("Could not create chat session:", error.message);
+    return null;
+  }
+
+  return data?.id || null;
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return sendJson(res, 405, { error: "Method not allowed" });
   }
-
-  if (!process.env.OPENAI_API_KEY) {
-    return sendJson(res, 503, {
-      error: "OPENAI_NOT_CONFIGURED",
-      detail: "OpenAI API key is not configured yet.",
-    });
-  }
-
-  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    return sendJson(res, 503, {
-      error: "SUPABASE_NOT_CONFIGURED",
-      detail: "Supabase environment variables are not configured yet.",
-    });
-  }
-
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-
-  const supabase = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-  );
 
   const message = String(req.body?.message || "").trim();
   let sessionId = req.body?.sessionId || null;
@@ -92,20 +87,39 @@ export default async function handler(req, res) {
     return sendJson(res, 400, { error: "Message is required" });
   }
 
+  const supabase =
+    process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY
+      ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY)
+      : null;
+
   try {
     if (!sessionId) {
-      const { data, error } = await supabase
-        .from("chat_sessions")
-        .insert({})
-        .select("id")
-        .single();
-
-      if (!error) {
-        sessionId = data?.id || null;
-      }
+      sessionId = await createSession(supabase);
     }
 
     await saveMessage(supabase, sessionId, "user", message);
+
+    const faqAnswer = findFaqAnswer(message);
+    if (faqAnswer) {
+      await saveMessage(supabase, sessionId, "assistant", faqAnswer);
+
+      return sendJson(res, 200, {
+        reply: faqAnswer,
+        sessionId,
+        source: "faq",
+      });
+    }
+
+    if (!process.env.OPENAI_API_KEY) {
+      return sendJson(res, 503, {
+        error: "OPENAI_NOT_CONFIGURED",
+        detail: "OpenAI API key is not configured yet.",
+      });
+    }
+
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
 
     const response = await openai.responses.create({
       model: process.env.OPENAI_MODEL || "gpt-5.4-mini",

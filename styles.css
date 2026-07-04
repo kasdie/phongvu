@@ -366,114 +366,54 @@ button {
 
 .account-actions {
   display: grid;
-  grid-template-columns: 140px 50px 1fr;
-  gap: 14px;
+  grid-template-columns: 124px 42px minmax(140px, 1fr);
+  gap: 16px;
   align-items: center;
-  color: #7b8093;
+  color: #7b8297;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 900;
+  line-height: 1.18;
 }
 
 .icon-text {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
+  min-width: 0;
 }
 
-.avatar-icon,
-.bell-icon,
-.cart-icon {
+.header-icon {
   flex: none;
-  width: 30px;
-  height: 30px;
-  color: #777d93;
-  position: relative;
-}
-
-.avatar-icon {
-  border: 2px solid currentColor;
-  border-radius: 50%;
-}
-
-.avatar-icon::before,
-.avatar-icon::after,
-.bell-icon::before,
-.bell-icon::after,
-.cart-icon::before,
-.cart-icon::after {
-  content: "";
-  position: absolute;
-}
-
-.avatar-icon::before {
-  top: 5px;
-  left: 9px;
-  width: 8px;
-  height: 8px;
-  border: 2px solid currentColor;
-  border-radius: 50%;
-}
-
-.avatar-icon::after {
-  left: 5px;
-  bottom: 5px;
-  width: 16px;
-  height: 8px;
-  border: 2px solid currentColor;
-  border-top: 0;
-  border-radius: 0 0 16px 16px;
-}
-
-.bell-icon {
-  border-bottom: 2px solid currentColor;
-}
-
-.bell-icon::before {
-  left: 5px;
-  top: 3px;
-  width: 18px;
-  height: 19px;
-  border: 2px solid currentColor;
-  border-bottom: 0;
-  border-radius: 13px 13px 4px 4px;
-}
-
-.bell-icon::after {
-  width: 5px;
-  height: 5px;
-  left: 12px;
-  bottom: -5px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.cart-icon {
-  border-bottom: 3px solid currentColor;
-}
-
-.cart-icon::before {
-  top: 7px;
-  left: 4px;
-  width: 19px;
-  height: 13px;
-  border: 3px solid currentColor;
-  border-top: 0;
-  transform: skewX(-8deg);
-}
-
-.cart-icon::after {
-  left: 5px;
-  bottom: -7px;
-  width: 22px;
-  height: 5px;
-  background:
-    radial-gradient(circle at 3px 2px, currentColor 0 2px, transparent 3px),
-    radial-gradient(circle at 19px 2px, currentColor 0 2px, transparent 3px);
+  width: 32px;
+  height: 32px;
+  display: block;
+  color: #7c8399;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.05;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .round-icon {
   display: grid;
   place-items: center;
+  color: #7c8399;
+}
+
+.round-icon .header-icon {
+  width: 35px;
+  height: 35px;
+}
+
+.bell-svg {
+  width: 36px;
+  height: 36px;
+  stroke-width: 2.15;
+}
+
+.cart-svg {
+  width: 34px;
 }
 
 .main-content {
