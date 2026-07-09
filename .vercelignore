@@ -1,6 +1,8 @@
 .env
 .env.local
-node_modules/
+.git
+.vercel
+node_modules
 *.log
 demo-server*.log
 vercel-dev*.log
@@ -11,6 +13,4 @@ data/phongvu-catalog/products.csv
 data/phongvu-catalog/demo-products.csv
 data/phongvu-catalog/errors.json
 data/phongvu-catalog/errors.ndjson
-data/phongvu-catalog/sitemaps/
-
-.vercel
+data/phongvu-catalog/sitemaps

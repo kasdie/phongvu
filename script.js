@@ -248,6 +248,29 @@ const englishText = {
   "Nhập nội dung...": "Type a message...",
   "Nhập nội dung chat": "Type a chat message",
   "Gửi tin nhắn": "Send message",
+  "Đang đọc catalog và ngữ cảnh mua hàng": "Reading catalog and shopping context",
+  "FAQ chính sách": "Policy FAQ",
+  "Xin chào! Hãy thử hỏi: “laptop học lập trình dưới 20 triệu”. Mình sẽ lọc store và đề xuất sản phẩm ngay trong màn hình này.": "Hello! Try asking: \"programming laptop under 20 million VND\". I will filter the store and recommend products right in this screen.",
+  "Laptop học lập trình dưới 20 triệu": "Programming laptop under 20 million VND",
+  "So sánh 2 sản phẩm đã chọn": "Compare the 2 selected products",
+  "Chính sách bảo hành laptop": "Laptop warranty policy",
+  "Can sales goi lai": "Need sales callback",
+  "Chuyển sales tư vấn nhanh": "Hand off to sales",
+  "Tên của bạn": "Your name",
+  "Số điện thoại": "Phone number",
+  "Email (không bắt buộc)": "Email (optional)",
+  "Email không bắt buộc": "Optional email",
+  "Nhu cầu/ngân sách": "Need/budget",
+  "Nhu cầu hoặc ngân sách": "Need or budget",
+  "Thời gian muốn nhận cuộc gọi": "Preferred callback time",
+  "Tôi đồng ý để Phong Vũ liên hệ tư vấn.": "I agree for Phong Vu to contact me for advice.",
+  "Gửi lead": "Send lead",
+  "Để sau": "Later",
+  "Nhập nhu cầu, ngân sách hoặc SKU...": "Enter need, budget, or SKU...",
+  "Chuyển giữa cửa hàng và chat": "Switch between store and chat",
+  "Cửa hàng": "Store",
+  "Thu gọn khung chat": "Compact chat panel",
+  "Mở rộng khung chat": "Expand chat panel",
   "Cảm ơn bạn! Trợ lý ảo sẽ phản hồi ngay. Bạn có thể cho mình biết nhu cầu hoặc ngân sách không?": "Thanks! The virtual assistant will reply shortly. Could you share your needs or budget?",
   "Tivi chuẩn nét": "Crisp TV deals",
   "Bảo hành toàn diện": "Complete warranty",
@@ -598,6 +621,20 @@ function tr(text) {
   return currentLanguage === "en" ? englishText[text] || text : text;
 }
 
+function uiText(viText, enText) {
+  return currentLanguage === "en" ? enText : viText;
+}
+
+function localizeNeedText(need) {
+  const normalized = normalizeCatalogText(need);
+  if (normalized.includes("hoc lap trinh") || normalized.includes("programming")) return uiText("Học lập trình", "Programming");
+  if (normalized.includes("hoc tap") || normalized.includes("study")) return uiText("Học tập", "Study");
+  if (normalized.includes("gaming")) return "Gaming";
+  if (normalized.includes("do hoa") || normalized.includes("graphics")) return uiText("Đồ họa", "Graphics");
+  if (normalized.includes("van phong") || normalized.includes("office")) return uiText("Văn phòng", "Office work");
+  return need || "";
+}
+
 let activeIndex = 0;
 let activeImage = slideImages[0];
 let standbyImage = slideImages[1];
@@ -681,42 +718,704 @@ slider?.addEventListener("mouseleave", restartAutoplay);
 slider?.addEventListener("focusin", () => window.clearInterval(autoplayId));
 slider?.addEventListener("focusout", restartAutoplay);
 
-document.querySelector(".search-form")?.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const value = event.currentTarget.querySelector("input").value.trim();
-  if (value) {
-    alert(`${tr("Tìm kiếm")}: ${value}`);
-  }
-});
-
 document.querySelector(".back-top")?.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
+const headerSearchForm = document.querySelector(".search-form");
 const assistantToggle = document.querySelector(".assistant-toggle");
 const assistantPanel = document.querySelector("#assistantChatPanel");
 const assistantClose = document.querySelector(".assistant-close");
+const assistantResize = document.querySelector(".assistant-resize");
 const assistantForm = document.querySelector(".assistant-chat-form");
 const assistantInput = assistantForm?.querySelector("input");
 const assistantBody = document.querySelector(".assistant-chat-body");
-const contactFloat = document.querySelector(".contact-float");
+const assistantContextBar = document.querySelector("[data-assistant-context]");
+const leadForm = document.querySelector("[data-lead-form]");
+const catalogWorkspace = document.querySelector("#catalogWorkspace");
+const catalogSearchForm = document.querySelector(".catalog-search-form");
+const catalogSearchInput = catalogSearchForm?.querySelector("input");
+const catalogCategoryFilter = document.querySelector(".catalog-category-filter");
+const catalogBudgetFilter = document.querySelector(".catalog-budget-filter");
+const catalogAiPrompt = document.querySelector(".catalog-ai-prompt");
+const catalogResults = document.querySelector("[data-catalog-results]");
+const productDetailPanel = document.querySelector("[data-product-detail]");
+const catalogCount = document.querySelector("[data-catalog-count]");
+const catalogContext = document.querySelector("[data-catalog-context]");
+const contextChips = document.querySelector("[data-context-chips]");
+const eventStream = document.querySelector("[data-event-stream]");
+const mobileSplitTabs = document.querySelector("[data-mobile-split-tabs]");
 let assistantSessionId = localStorage.getItem("pv-assistant-session-id");
 let assistantIsSending = false;
+const catalogState = {
+  products: [],
+  visibleProducts: [],
+  selectedCategory: "",
+  selectedBudget: "",
+  query: "",
+  userNeed: "",
+  viewedSkus: new Set(JSON.parse(localStorage.getItem("pv-viewed-skus") || "[]")),
+  shortlistedSkus: new Set(JSON.parse(localStorage.getItem("pv-shortlisted-skus") || "[]")),
+  focusedSku: "",
+  events: [],
+};
+const kpiCounts = JSON.parse(localStorage.getItem("pv-kpi-counts") || "{}");
+let anonymousUserId = localStorage.getItem("pv-anonymous-user-id");
+
+if (!anonymousUserId) {
+  anonymousUserId = globalThis.crypto?.randomUUID?.() || `pv-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  localStorage.setItem("pv-anonymous-user-id", anonymousUserId);
+}
+
+function normalizeCatalogText(text) {
+  return String(text || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/[^a-z0-9\s.-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function hasCatalogKeyword(normalizedText, keyword) {
+  const normalizedKeyword = normalizeCatalogText(keyword);
+  if (!normalizedKeyword) return false;
+  const pattern = normalizedKeyword
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+    .join("\\s+");
+  return new RegExp(`(^|\\s)${pattern}(?=\\s|$)`).test(normalizedText);
+}
+
+function hasAnyCatalogKeyword(normalizedText, keywords = []) {
+  return keywords.some((keyword) => hasCatalogKeyword(normalizedText, keyword));
+}
+
+function formatVnd(value) {
+  if (!Number.isFinite(Number(value))) return uiText("Liên hệ", "Contact for price");
+  return `${Number(value).toLocaleString("vi-VN")} đ`;
+}
+
+function compactText(text, maxLength = 120) {
+  const value = String(text || "").replace(/\s+/g, " ").trim();
+  return value.length > maxLength ? `${value.slice(0, maxLength - 1)}…` : value;
+}
+
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function productSearchText(product) {
+  return normalizeCatalogText([
+    product.sku,
+    product.name,
+    product.brand,
+    product.categoryName,
+    product.category,
+    product.categorySlug,
+    product.description,
+    product.keySpecs,
+    ...(product.specifications || []).flatMap((item) => [item.name, item.value]),
+  ].join(" "));
+}
+
+function productKeySpecs(product, limit = 3) {
+  if (Array.isArray(product.specifications) && product.specifications.length) {
+    return product.specifications
+      .filter((item) => item?.name && item?.value)
+      .slice(0, limit)
+      .map((item) => `${item.name}: ${item.value}`);
+  }
+
+  return String(product.keySpecs || "")
+    .split(";")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, limit);
+}
+
+function availabilityLabel(product) {
+  if (product.availability === "InStock") return uiText("Còn hàng", "In stock");
+  if (product.availability === "OutOfStock") return uiText("Hết hàng", "Out of stock");
+  return uiText("Cần kiểm tra", "Needs checking");
+}
+
+function getSpecValue(product, aliases = []) {
+  const normalizedAliases = aliases.map(normalizeCatalogText);
+  const specs = Array.isArray(product.specifications) ? product.specifications : [];
+  const found = specs.find((item) => normalizedAliases.includes(normalizeCatalogText(item?.name)));
+  if (found?.value) return found.value;
+
+  return productKeySpecs(product, 16)
+    .map((line) => {
+      const [name, ...rest] = String(line).split(":");
+      return { name: normalizeCatalogText(name), value: rest.join(":").trim() };
+    })
+    .find((item) => normalizedAliases.includes(item.name))?.value || "";
+}
+
+function formatCatalogDate(value) {
+  if (!value) return "Chưa có";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Chưa có";
+  return date.toLocaleString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function isPolicyPrompt(text) {
+  const normalized = normalizeCatalogText(text);
+  return ["bao hanh", "doi tra", "giao hang", "tra gop", "hoa don", "vat", "hotline", "don hang", "ship"]
+    .some((keyword) => normalized.includes(keyword));
+}
+
+function isComparePrompt(text) {
+  const normalized = normalizeCatalogText(text);
+  return ["so sanh", "compare", "chon giua", "khac nhau"].some((keyword) => normalized.includes(keyword));
+}
+
+function isCatalogIntent(text) {
+  if (isPolicyPrompt(text)) return false;
+  const normalized = normalizeCatalogText(text);
+  if (parseBudgetFromText(text)) return true;
+  if (/\bsku\s*\d+/i.test(text)) return true;
+
+  return [
+    "tu van",
+    "tim",
+    "mua",
+    "goi y",
+    "recommend",
+    "buy",
+    "mac",
+    "macbook",
+    "apple",
+    "laptop",
+    "pc",
+    "may tinh",
+    "man hinh",
+    "chuot",
+    "mouse",
+    "ban phim",
+    "keyboard",
+    "tai nghe",
+    "headphone",
+    "headset",
+    "may in",
+    "printer",
+    "ram",
+    "ssd",
+    "vga",
+    "gaming",
+    "so sanh",
+  ].some((keyword) => normalized.includes(keyword));
+}
+
+function inferCategoryFromText(text) {
+  const normalized = normalizeCatalogText(text);
+  const rules = [
+    ["san-pham-apple", ["mac", "macbook", "mac mini", "imac", "iphone", "ipad", "apple"]],
+    ["may-tinh-de-ban", ["pc", "may tinh ban", "desktop pc", "build pc"]],
+    ["man-hinh-may-tinh", ["man hinh", "monitor", "144hz", "2k", "4k"]],
+    ["h-gaming-gear", ["gaming gear", "chuot gaming", "ban phim gaming", "tai nghe gaming"]],
+    ["phu-kien-pc", ["phu kien pc", "chuot", "mouse", "ban phim", "keyboard", "lot chuot", "mousepad"]],
+    ["thiet-bi-van-phong", ["may in", "van phong", "muc in"]],
+    ["thiet-bi-am-thanh", ["tai nghe", "headphone", "headset", "loa", "speaker"]],
+    ["linh-kien-may-tinh", ["cpu", "ram", "ssd", "hdd", "vga", "card man hinh", "mainboard", "nguon", "case"]],
+    ["laptop", ["laptop", "hoc lap trinh", "sinh vien", "van phong", "gaming"]],
+  ];
+  return rules.find(([, words]) => hasAnyCatalogKeyword(normalized, words))?.[0] || "";
+}
+
+function catalogSlugFromMenuKey(menuKey) {
+  const map = {
+    laptop: "laptop",
+    apple: "san-pham-apple",
+    appliance: "dien-may-dien-gia-dung",
+    home: "do-gia-dung",
+    pc: "may-tinh-de-ban",
+    monitor: "man-hinh-may-tinh",
+    components: "linh-kien-may-tinh",
+    "computer-accessories": "phu-kien-pc",
+    gaming: "h-gaming-gear",
+    mobile: "dien-thoai-may-tinh-bang-phu-kien",
+    accessories: "phu-kien-chung",
+    audio: "thiet-bi-am-thanh",
+    office: "thiet-bi-van-phong",
+    business: "giai-phap-doanh-nghiep",
+    clearance: "hang-thanh-ly",
+  };
+  return map[menuKey] || menuKey || "";
+}
+
+
+function inferNeedFromText(text) {
+  const normalized = normalizeCatalogText(text);
+  if (normalized.includes("hoc lap trinh")) return uiText("Học lập trình", "Programming");
+  if (normalized.includes("sinh vien") || normalized.includes("hoc tap")) return uiText("Học tập", "Study");
+  if (normalized.includes("gaming") || normalized.includes("choi game")) return "Gaming";
+  if (normalized.includes("do hoa") || normalized.includes("render")) return uiText("Đồ họa", "Graphics");
+  if (normalized.includes("van phong") || normalized.includes("excel")) return uiText("Văn phòng", "Office work");
+  return "";
+}
+
+function parseBudgetFromText(text) {
+  const normalized = normalizeCatalogText(text);
+  const rangeMatch = normalized.match(/(\d+(?:\.\d+)?)\s*(?:-|den|toi)\s*(\d+(?:\.\d+)?)\s*(?:trieu|tr|m)/);
+  if (rangeMatch) {
+    return {
+      min: Number(rangeMatch[1]) * 1000000,
+      max: Number(rangeMatch[2]) * 1000000,
+      strictMax: true,
+    };
+  }
+
+  const millionMatch = normalized.match(/(?:duoi|toi da|tam|khoang|under)?\s*(\d+(?:\.\d+)?)\s*(?:trieu|tr|m)/);
+  if (!millionMatch) return null;
+
+  const amount = Number(millionMatch[1]) * 1000000;
+  const strictBudget = [
+    "duoi",
+    "toi da",
+    "under",
+    "chi co",
+    "ngan sach toi da",
+    "budget toi chi co",
+    "budget chi co",
+  ].some((keyword) => normalized.includes(keyword));
+
+  if (strictBudget) {
+    return { min: 0, max: amount, strictMax: true };
+  }
+  if (normalized.includes("tren")) {
+    return { min: amount, max: 999999999 };
+  }
+  return { min: Math.max(0, amount - 3000000), max: amount + 3000000, strictMax: false };
+}
+
+function parseBudgetFilter(value) {
+  if (!value) return null;
+  const [min, max] = value.split("-").map(Number);
+  return Number.isFinite(min) && Number.isFinite(max) ? { min, max, strictMax: true } : null;
+}
+
+function getBudgetRange() {
+  return parseBudgetFilter(catalogState.selectedBudget) || parseBudgetFromText(catalogState.query);
+}
+
+function isProductInBudget(product, budget, allowNear = false) {
+  if (!budget || !Number.isFinite(Number(product.price))) return true;
+  const price = Number(product.price);
+  const max = allowNear && !budget.strictMax ? budget.max * 1.15 : budget.max;
+  return price >= budget.min && price <= max;
+}
+
+function scoreProduct(product, query, options = {}) {
+  const normalizedQuery = normalizeCatalogText(query);
+  const searchText = productSearchText(product);
+  const productName = normalizeCatalogText(product.name);
+  const terms = normalizedQuery.split(" ").filter((term) => term.length > 1);
+  let score = 0;
+
+  for (const term of terms) {
+    if (searchText.includes(term)) score += 2;
+    if (productName.includes(term)) score += 2;
+    if (normalizeCatalogText(product.brand).includes(term)) score += 1;
+  }
+
+  const wantsMouse = hasAnyCatalogKeyword(normalizedQuery, ["chuot", "mouse"]);
+  const wantsMousepad = hasAnyCatalogKeyword(normalizedQuery, ["lot chuot", "mousepad", "mouse mat"]);
+  const isMousepad = hasAnyCatalogKeyword(productName, ["lot chuot", "tam lot chuot", "mieng lot chuot", "mousepad", "mouse mat"]);
+  if (wantsMouse && !wantsMousepad && isMousepad) score -= 8;
+
+  if (options.category && product.categorySlug === options.category) score += 8;
+  if (product.availability === "InStock") score += 4;
+  if (catalogState.shortlistedSkus.has(product.sku)) score += 2;
+
+  const budget = options.budget;
+  if (budget && Number.isFinite(Number(product.price))) {
+    if (isProductInBudget(product, budget)) score += 7;
+    else if (isProductInBudget(product, budget, true)) score += 3;
+    else score -= 6;
+  }
+
+  if (options.need && searchText.includes(normalizeCatalogText(options.need))) score += 4;
+  return score;
+}
+
+function filterCatalogProducts() {
+  const budget = getBudgetRange();
+  const queryCategory = inferCategoryFromText(catalogState.query);
+  const category = queryCategory || catalogState.selectedCategory;
+  const query = catalogState.query;
+  const normalizedQuery = normalizeCatalogText(query);
+
+  let products = catalogState.products.filter((product) => {
+    if (category && product.categorySlug !== category) return false;
+    if (budget && !isProductInBudget(product, budget, true)) return false;
+    if (!normalizedQuery) return true;
+    return scoreProduct(product, query, { category, budget, need: catalogState.userNeed }) > 0;
+  });
+
+  products = products
+    .map((product) => ({
+      product,
+      score: scoreProduct(product, query, { category, budget, need: catalogState.userNeed }),
+    }))
+    .sort((a, b) => {
+      const stockDelta = Number(b.product.availability === "InStock") - Number(a.product.availability === "InStock");
+      return stockDelta || b.score - a.score || Number(a.product.price || 0) - Number(b.product.price || 0);
+    })
+    .map((item) => item.product);
+
+  const hasActiveFilter = Boolean(category || budget || normalizedQuery);
+  catalogState.visibleProducts = products.length || hasActiveFilter ? products : catalogState.products.slice(0, 12);
+}
+
+function categoryName(slug) {
+  return catalogState.products.find((product) => product.categorySlug === slug)?.categoryName || slug || "Tất cả";
+}
+
+function updateKpiPanel() {
+  document.querySelectorAll("[data-kpi]").forEach((element) => {
+    element.textContent = String(kpiCounts[element.dataset.kpi] || 0);
+  });
+}
+
+function rememberLocalSet(key, set) {
+  localStorage.setItem(key, JSON.stringify([...set].slice(-40)));
+}
+
+function persistCompareSelection() {
+  rememberLocalSet("pv-shortlisted-skus", catalogState.shortlistedSkus);
+  renderContextChips();
+}
+
+function clearCatalogIntentContext() {
+  catalogState.query = "";
+  catalogState.userNeed = "";
+  catalogState.selectedBudget = "";
+  if (catalogSearchInput) catalogSearchInput.value = "";
+  if (catalogBudgetFilter) catalogBudgetFilter.value = "";
+}
+
+function beginCompareSelection(product, source = "compare_button") {
+  if (!product) return { ready: false, reset: false };
+
+  const hadFullPair = catalogState.shortlistedSkus.size >= 2;
+  const alreadySelected = catalogState.shortlistedSkus.has(product.sku);
+  let reset = false;
+
+  if (catalogState.shortlistedSkus.size > 2 || (hadFullPair && !alreadySelected)) {
+    catalogState.shortlistedSkus.clear();
+    clearCatalogIntentContext();
+    reset = true;
+  }
+
+  catalogState.shortlistedSkus.add(product.sku);
+  catalogState.focusedSku = product.sku;
+  catalogState.selectedCategory = product.categorySlug || catalogState.selectedCategory;
+  if (catalogCategoryFilter && product.categorySlug) catalogCategoryFilter.value = product.categorySlug;
+  catalogState.viewedSkus.add(product.sku);
+  rememberLocalSet("pv-viewed-skus", catalogState.viewedSkus);
+  persistCompareSelection();
+  renderCatalogProducts();
+  trackEvent("shortlist_added", { sku: product.sku, source, reset });
+
+  return {
+    ready: catalogState.shortlistedSkus.size >= 2,
+    reset,
+  };
+}
+
+function pushEventStream(eventName, payload = {}) {
+  const label = `${new Date().toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })} · ${eventName}${payload.sku ? ` · ${payload.sku}` : ""}`;
+  catalogState.events.unshift(label);
+  catalogState.events = catalogState.events.slice(0, 7);
+  if (!eventStream) return;
+  eventStream.innerHTML = catalogState.events.map((event) => `<li>${escapeHtml(event)}</li>`).join("");
+}
+
+function trackEvent(eventName, payload = {}) {
+  kpiCounts[eventName] = (kpiCounts[eventName] || 0) + 1;
+  localStorage.setItem("pv-kpi-counts", JSON.stringify(kpiCounts));
+  updateKpiPanel();
+  pushEventStream(eventName, payload);
+
+  const eventPayload = {
+    eventName,
+    sessionId: assistantSessionId,
+    anonymousUserId,
+    timestamp: new Date().toISOString(),
+    payload: {
+      ...payload,
+      currentCategory: catalogState.selectedCategory,
+      query: catalogState.query,
+    },
+  };
+
+  fetch("/api/track", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(eventPayload),
+    keepalive: true,
+  }).catch(() => {
+    console.info("Tracking fallback:", eventPayload);
+  });
+}
+
+function renderContextChips() {
+  const budget = getBudgetRange();
+  const chips = [];
+  if (catalogState.selectedCategory) chips.push(`${uiText("Danh mục", "Category")}: ${categoryName(catalogState.selectedCategory)}`);
+  if (catalogState.query) chips.push(`Query: ${compactText(catalogState.query, 34)}`);
+  if (budget) chips.push(`${uiText("Ngân sách", "Budget")}: ${formatVnd(budget.min)} - ${formatVnd(budget.max)}`);
+  if (catalogState.userNeed) chips.push(`${uiText("Nhu cầu", "Need")}: ${localizeNeedText(catalogState.userNeed)}`);
+  if (catalogState.shortlistedSkus.size) chips.push(`Shortlist: ${catalogState.shortlistedSkus.size}`);
+
+  const html = (chips.length ? chips : [uiText("Chưa có nhu cầu", "No active need")]).map((chip) => `<span>${escapeHtml(chip)}</span>`).join("");
+  if (contextChips) contextChips.innerHTML = html;
+  if (assistantContextBar) assistantContextBar.innerHTML = html;
+}
+
+function renderCatalogProducts() {
+  if (!catalogResults) return;
+  filterCatalogProducts();
+  const products = catalogState.visibleProducts.slice(0, 12);
+
+  if (catalogCount) {
+    catalogCount.textContent = uiText(`${catalogState.visibleProducts.length} sản phẩm phù hợp`, `${catalogState.visibleProducts.length} matching products`);
+  }
+  if (catalogContext) {
+    const context = [
+      catalogState.selectedCategory ? categoryName(catalogState.selectedCategory) : uiText("Tất cả danh mục", "All categories"),
+      catalogState.query ? `"${catalogState.query}"` : uiText("chưa có query", "no query yet"),
+    ].join(" · ");
+    catalogContext.textContent = context;
+  }
+
+  if (!products.length) {
+    catalogResults.innerHTML = `
+      <div class="catalog-empty-state">
+        <strong>${uiText("Chưa có sản phẩm khớp điều kiện", "No products match these conditions")}</strong>
+        <p>${uiText("Thử nới ngân sách, đổi danh mục hoặc gửi lead để sales kiểm tra thêm mẫu phù hợp.", "Try widening the budget, changing category, or sending a lead so sales can check more suitable options.")}</p>
+      </div>
+    `;
+    renderContextChips();
+    return;
+  }
+
+  catalogResults.innerHTML = products.map((product) => {
+    const specs = productKeySpecs(product, 3).map((spec) => `<p>${escapeHtml(compactText(spec, 84))}</p>`).join("");
+    return `
+      <article class="catalog-product-card${catalogState.focusedSku === product.sku ? " is-focused" : ""}" data-sku="${escapeHtml(product.sku)}">
+        <img src="${escapeHtml(product.image || "assets/images/logos/logo.svg")}" alt="${escapeHtml(product.name)}" loading="lazy">
+        <div class="catalog-card-meta">
+          <span class="product-badge">${escapeHtml(product.brand || "Phong Vũ")}</span>
+          <span class="product-badge">${escapeHtml(availabilityLabel(product))}</span>
+        </div>
+        <h3>${escapeHtml(compactText(product.name, 82))}</h3>
+        <strong>${escapeHtml(product.priceFormatted || formatVnd(product.price))}</strong>
+        <div>${specs || `<p>${escapeHtml(compactText(product.description, 110))}</p>`}</div>
+        <div class="catalog-card-actions">
+          <button type="button" data-action="detail" data-sku="${escapeHtml(product.sku)}">${uiText("Chi tiết", "Details")}</button>
+          <button type="button" data-action="ask" data-sku="${escapeHtml(product.sku)}">${uiText("Hỏi AI", "Ask AI")}</button>
+          <button type="button" data-action="compare" data-sku="${escapeHtml(product.sku)}">${uiText("So sánh", "Compare")}</button>
+          <button type="button" data-action="shortlist" data-sku="${escapeHtml(product.sku)}">${catalogState.shortlistedSkus.has(product.sku) ? uiText("Đã chọn", "Selected") : "Shortlist"}</button>
+          <button type="button" data-action="cart" data-sku="${escapeHtml(product.sku)}">${uiText("Thêm vào giỏ demo", "Add to demo cart")}</button>
+        </div>
+      </article>
+    `;
+  }).join("");
+
+  renderContextChips();
+}
+
+function populateCatalogFilters() {
+  if (!catalogCategoryFilter) return;
+  const options = [...new Map(catalogState.products.map((product) => [product.categorySlug, product.categoryName])).entries()]
+    .sort((a, b) => a[1].localeCompare(b[1], "vi"));
+  catalogCategoryFilter.innerHTML = `<option value="">${uiText("Tất cả danh mục", "All categories")}</option>${options
+    .map(([slug, name]) => `<option value="${escapeHtml(slug)}">${escapeHtml(name)}</option>`)
+    .join("")}`;
+}
+
+function scrollToCatalog() {
+  catalogWorkspace?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+}
+
+function applyCatalogSearch(value, options = {}) {
+  catalogState.query = value.trim();
+  catalogState.userNeed = inferNeedFromText(catalogState.query);
+  const inferredCategory = inferCategoryFromText(catalogState.query);
+  if (inferredCategory && catalogState.selectedCategory !== inferredCategory) {
+    catalogState.selectedCategory = inferredCategory;
+    if (catalogCategoryFilter) catalogCategoryFilter.value = inferredCategory;
+  }
+  if (catalogSearchInput) catalogSearchInput.value = catalogState.query;
+  renderCatalogProducts();
+  if (catalogState.query && options.track !== false) {
+    trackEvent("search_submitted", { query: catalogState.query, source: options.source || "store" });
+  }
+  if (options.scroll !== false) scrollToCatalog();
+}
+
+function applyCatalogCategory(category, options = {}) {
+  catalogState.selectedCategory = category || "";
+  if (catalogCategoryFilter) catalogCategoryFilter.value = catalogState.selectedCategory;
+  renderCatalogProducts();
+  trackEvent("category_selected", { categorySlug: catalogState.selectedCategory, source: options.source || "category_menu" });
+  if (options.scroll !== false) scrollToCatalog();
+}
+
+function getProductBySku(sku) {
+  return catalogState.products.find((product) => product.sku === sku);
+}
+
+function renderProductDetail(product, source = "catalog_card") {
+  if (!productDetailPanel || !product) return;
+
+  const specs = productKeySpecs(product, 9)
+    .map((spec) => `<li>${escapeHtml(spec)}</li>`)
+    .join("");
+  const warranty = getSpecValue(product, ["bao hanh", "warranty"]) || uiText("Theo catalog", "According to catalog");
+
+  productDetailPanel.hidden = false;
+  productDetailPanel.innerHTML = `
+    <div class="detail-drawer-header">
+      <div>
+        <span>${uiText("Chi tiết sản phẩm", "Product detail")}</span>
+        <h3>${escapeHtml(product.name)}</h3>
+      </div>
+      <button type="button" data-close-detail aria-label="${uiText("Đóng chi tiết", "Close detail")}">×</button>
+    </div>
+    <div class="detail-drawer-body">
+      <img src="${escapeHtml(product.image || "assets/images/logos/logo.svg")}" alt="${escapeHtml(product.name)}" loading="lazy">
+      <dl>
+        <div><dt>SKU</dt><dd>${escapeHtml(product.sku)}</dd></div>
+        <div><dt>${uiText("Giá", "Price")}</dt><dd>${escapeHtml(product.priceFormatted || formatVnd(product.price))}</dd></div>
+        <div><dt>${uiText("Tồn kho", "Stock")}</dt><dd>${escapeHtml(availabilityLabel(product))}</dd></div>
+        <div><dt>${uiText("Bảo hành", "Warranty")}</dt><dd>${escapeHtml(warranty)}</dd></div>
+        <div><dt>Catalog scrape</dt><dd>${escapeHtml(formatCatalogDate(product.scrapedAt))}</dd></div>
+      </dl>
+      <ul>${specs}</ul>
+      <div class="detail-drawer-actions">
+        <button type="button" data-detail-action="ask" data-sku="${escapeHtml(product.sku)}">${uiText("Hỏi AI về sản phẩm", "Ask AI about this product")}</button>
+        <button type="button" data-detail-action="compare" data-sku="${escapeHtml(product.sku)}">${uiText("Đưa vào so sánh", "Add to comparison")}</button>
+        <a href="${escapeHtml(product.productUrl || "#")}" target="_blank" rel="noreferrer">${uiText("Mở trang Phong Vũ", "Open Phong Vu page")}</a>
+      </div>
+    </div>
+  `;
+
+  catalogState.focusedSku = product.sku;
+  catalogState.viewedSkus.add(product.sku);
+  rememberLocalSet("pv-viewed-skus", catalogState.viewedSkus);
+  renderContextChips();
+  trackEvent("product_detail_opened", { sku: product.sku, source });
+  productDetailPanel.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest" });
+}
+
+function ensureCompareSelection() {
+  if (catalogState.shortlistedSkus.size >= 2) return;
+
+  const category = catalogState.selectedCategory || inferCategoryFromText(catalogState.query);
+  const sameCategory = category ? catalogState.products.filter((product) => product.categorySlug === category) : [];
+  const pool = [
+    ...(catalogState.visibleProducts.length ? catalogState.visibleProducts : []),
+    ...sameCategory,
+    ...catalogState.products,
+  ];
+  const uniquePool = [...new Map(pool.map((product) => [product.sku, product])).values()];
+  const candidates = uniquePool
+    .filter((product) => product.availability === "InStock")
+    .concat(uniquePool.filter((product) => product.availability !== "InStock"));
+
+  for (const product of candidates) {
+    if (catalogState.shortlistedSkus.size >= 2) break;
+    catalogState.shortlistedSkus.add(product.sku);
+  }
+
+  rememberLocalSet("pv-shortlisted-skus", catalogState.shortlistedSkus);
+  renderCatalogProducts();
+}
+
+function focusProduct(sku) {
+  const product = getProductBySku(sku);
+  if (!product) return;
+  catalogState.focusedSku = sku;
+  catalogState.viewedSkus.add(sku);
+  rememberLocalSet("pv-viewed-skus", catalogState.viewedSkus);
+  catalogState.selectedCategory = product.categorySlug;
+  if (catalogCategoryFilter) catalogCategoryFilter.value = product.categorySlug;
+  renderCatalogProducts();
+  scrollToCatalog();
+  window.setTimeout(() => {
+    document.querySelector(`.catalog-product-card[data-sku="${CSS.escape(sku)}"]`)?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+  }, 80);
+  trackEvent("product_viewed", { sku, source: "recommendation_or_card" });
+}
+
+function buildChatContext(prompt = "") {
+  const isComparison = isComparePrompt(prompt);
+  const budget = isComparison ? null : getBudgetRange();
+  const promptCategory = isComparison ? "" : inferCategoryFromText(prompt);
+  const queryCategory = isComparison ? "" : inferCategoryFromText(catalogState.query);
+  return {
+    currentCategory: promptCategory || queryCategory || catalogState.selectedCategory,
+    searchQuery: isComparison ? "" : catalogState.query,
+    viewedProductSkus: [...catalogState.viewedSkus].slice(-8),
+    shortlistedProductSkus: [...catalogState.shortlistedSkus].slice(-2),
+    budgetRange: budget,
+    userNeed: isComparison ? "" : localizeNeedText(catalogState.userNeed),
+    language: currentLanguage,
+  };
+}
 
 function setAssistantOpen(isOpen) {
   if (!assistantPanel || !assistantToggle) return;
 
-  assistantPanel.classList.toggle("is-open", isOpen);
+  const wasOpen = document.body.classList.contains("assistant-split-open");
+  document.body.classList.toggle("assistant-split-open", isOpen);
   assistantPanel.setAttribute("aria-hidden", isOpen ? "false" : "true");
   assistantToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
 
   if (isOpen) {
+    if (!wasOpen) trackEvent("split_chat_opened", { source: "chat_icon" });
     window.setTimeout(() => assistantInput?.focus(), 120);
+  } else {
+    setMobileSplitView("chat");
   }
 }
 
+function setMobileSplitView(view = "chat") {
+  document.body.classList.toggle("assistant-mobile-store", view === "store");
+  mobileSplitTabs?.querySelectorAll("[data-mobile-view]").forEach((button) => {
+    button.classList.toggle("is-active", button.dataset.mobileView === view);
+  });
+}
+
+function openLeadForm(source = "assistant") {
+  if (!leadForm) return;
+  setAssistantOpen(true);
+  setMobileSplitView("chat");
+  leadForm.hidden = false;
+  trackEvent("handoff_requested", { source });
+  trackEvent("lead_form_opened", { source });
+}
+
 function addChatMessage(text, type = "bot") {
-  if (!assistantBody) return;
+  if (!assistantBody) return null;
 
   const message = document.createElement("p");
   message.className = `chat-message ${type}`;
@@ -726,14 +1425,112 @@ function addChatMessage(text, type = "bot") {
   return message;
 }
 
+function recommendationReasons(product) {
+  const reasons = [];
+  if (product.availability === "InStock") reasons.push(uiText("Đang còn hàng theo catalog demo", "In stock in the demo catalog"));
+  if (Number.isFinite(Number(product.price))) reasons.push(uiText(`Giá ${product.priceFormatted || formatVnd(product.price)}`, `Price ${product.priceFormatted || formatVnd(product.price)}`));
+  reasons.push(...productKeySpecs(product, 2));
+  return reasons.slice(0, 3);
+}
+
+function renderRecommendations(recommendations = []) {
+  if (!assistantBody || !recommendations.length) return;
+  const wrapper = document.createElement("div");
+  wrapper.className = "chat-recommendations";
+  wrapper.innerHTML = recommendations.slice(0, 4).map((item) => {
+    const product = getProductBySku(item.sku) || item;
+    const reasons = item.reasons || recommendationReasons(product);
+    return `
+      <article class="recommendation-card" data-recommendation-sku="${item.sku}">
+        <img src="${escapeHtml(item.image || product.image || "assets/images/logos/logo.svg")}" alt="${escapeHtml(item.name || product.name)}" loading="lazy">
+        <div>
+          <h4>${escapeHtml(compactText(item.name || product.name, 72))}</h4>
+          <strong>${escapeHtml(item.priceFormatted || product.priceFormatted || formatVnd(product.price))}</strong>
+          <p>${escapeHtml(compactText(reasons.join(" · "), 120))}</p>
+          <div class="recommendation-actions">
+            <button type="button" data-reco-action="view" data-sku="${escapeHtml(item.sku)}">${uiText("Xem trong store", "View in store")}</button>
+            <button type="button" data-reco-action="detail" data-sku="${escapeHtml(item.sku)}">${uiText("Chi tiết", "Details")}</button>
+            <button type="button" data-reco-action="ask" data-sku="${escapeHtml(item.sku)}">${uiText("Hỏi tiếp", "Ask more")}</button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join("");
+  assistantBody.append(wrapper);
+  assistantBody.scrollTop = assistantBody.scrollHeight;
+}
+
+function renderComparison(comparison) {
+  if (!assistantBody || !comparison?.items?.length) return;
+
+  const fields = [
+    [uiText("Giá", "Price"), "priceFormatted"],
+    [uiText("Tồn kho", "Stock"), "availability"],
+    [uiText("Bảo hành", "Warranty"), "warranty"],
+    ["CPU", "cpu"],
+    ["RAM", "ram"],
+    [uiText("Lưu trữ", "Storage"), "storage"],
+    [uiText("Màn hình", "Display"), "screen"],
+    [uiText("Đồ họa", "Graphics"), "graphics"],
+    ["AI/NPU", "npu"],
+    [uiText("Phù hợp", "Best for"), "need"],
+    [uiText("Ưu điểm", "Pros"), "pros"],
+    [uiText("Nhược điểm", "Cons"), "cons"],
+  ];
+
+  const renderCell = (value) => {
+    if (Array.isArray(value)) {
+      return value.length
+        ? `<ul>${value.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`
+        : uiText("Cần kiểm tra", "Needs checking");
+    }
+    return escapeHtml(value || uiText("Cần kiểm tra", "Needs checking"));
+  };
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "chat-comparison";
+  wrapper.innerHTML = `
+    <strong>${escapeHtml(comparison.title || uiText("So sánh nhanh", "Quick comparison"))}</strong>
+    <div class="comparison-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>${uiText("Tiêu chí", "Criteria")}</th>
+            ${comparison.items.map((item) => `<th>${escapeHtml(compactText(item.name, 42))}</th>`).join("")}
+          </tr>
+        </thead>
+        <tbody>
+          ${fields.map(([label, key]) => `
+            <tr>
+              <th>${escapeHtml(label)}</th>
+              ${comparison.items.map((item) => `<td>${renderCell(item[key])}</td>`).join("")}
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+    </div>
+    <p>${escapeHtml(comparison.recommendation || "")}</p>
+  `;
+
+  assistantBody.append(wrapper);
+  assistantBody.scrollTop = assistantBody.scrollHeight;
+}
+
 async function sendAssistantPrompt(text) {
   const value = text.trim();
   if (!value || assistantIsSending) return;
 
+  setAssistantOpen(true);
+  setMobileSplitView("chat");
+  const shouldSyncStore = isCatalogIntent(value);
+  if (shouldSyncStore && !isComparePrompt(value)) {
+    applyCatalogSearch(value, { fromAssistant: true, source: "assistant", scroll: false });
+  }
   assistantIsSending = true;
   if (assistantInput) assistantInput.disabled = true;
   addChatMessage(value, "user");
-  const pendingMessage = addChatMessage("Đang trả lời...", "bot");
+  const pendingMessage = addChatMessage(uiText("Đang trả lời...", "Thinking..."), "bot");
+  trackEvent("chat_message_sent", { messageLength: value.length });
 
   try {
     const response = await fetch("/api/chat", {
@@ -744,21 +1541,18 @@ async function sendAssistantPrompt(text) {
       body: JSON.stringify({
         message: value,
         sessionId: assistantSessionId,
+        anonymousUserId,
+        language: currentLanguage,
+        context: buildChatContext(value),
       }),
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      if (data.error === "OPENAI_QUOTA_EXCEEDED") {
-        throw new Error("OPENAI_QUOTA_EXCEEDED");
-      }
-      if (data.error === "OPENAI_RATE_LIMITED") {
-        throw new Error("OPENAI_RATE_LIMITED");
-      }
-      if (data.error === "OPENAI_NOT_CONFIGURED" || data.error === "SUPABASE_NOT_CONFIGURED") {
-        throw new Error("CHAT_NOT_CONFIGURED");
-      }
+      if (data.error === "OPENAI_QUOTA_EXCEEDED") throw new Error("OPENAI_QUOTA_EXCEEDED");
+      if (data.error === "OPENAI_RATE_LIMITED") throw new Error("OPENAI_RATE_LIMITED");
+      if (data.error === "OPENAI_NOT_CONFIGURED" || data.error === "SUPABASE_NOT_CONFIGURED") throw new Error("CHAT_NOT_CONFIGURED");
       throw new Error(data.error || data.detail || "Chat API failed");
     }
 
@@ -768,20 +1562,27 @@ async function sendAssistantPrompt(text) {
     }
 
     if (pendingMessage) {
-      pendingMessage.textContent = data.reply || "Mình chưa có câu trả lời phù hợp. Bạn thử hỏi lại giúp mình nhé.";
+      pendingMessage.textContent = data.reply || uiText("Mình chưa có câu trả lời phù hợp. Bạn thử hỏi lại giúp mình nhé.", "I do not have a reliable answer yet. Please try again with a bit more detail.");
+    }
+
+    if (data.comparison) {
+      renderComparison(data.comparison);
+      trackEvent("comparison_returned", { count: data.comparison.items?.length || 0, source: data.source || "chat" });
+    }
+
+    if (data.recommendations?.length) {
+      renderRecommendations(data.recommendations);
+      trackEvent("catalog_recommendation_returned", { count: data.recommendations.length, source: data.source || "chat" });
+    } else if (data.source === "openai" || String(data.source || "").startsWith("ai_")) {
+      trackEvent("openai_answered", { source: data.source || "openai" });
     }
   } catch (error) {
     if (pendingMessage) {
-      if (error.message === "OPENAI_QUOTA_EXCEEDED") {
-        pendingMessage.textContent = "Tài khoản OpenAI API đang hết quota hoặc chưa bật billing. Bạn kiểm tra Usage, Limits và Billing trong OpenAI Platform nhé.";
-      } else if (error.message === "OPENAI_RATE_LIMITED") {
-        pendingMessage.textContent = "OpenAI đang giới hạn tốc độ gửi yêu cầu. Bạn thử lại sau ít phút nhé.";
-      } else if (error.message === "CHAT_NOT_CONFIGURED") {
-        pendingMessage.textContent = "Trợ lý AI đang được cấu hình. Website vẫn hoạt động, bạn quay lại chat sau nhé.";
-      } else {
-        pendingMessage.textContent = "Hiện tại trợ lý chưa kết nối được. Bạn kiểm tra lại key và terminal giúp mình nhé.";
-      }
+      pendingMessage.textContent = error.message === "CHAT_NOT_CONFIGURED"
+        ? uiText("AI API chưa được cấu hình. Cần OPENAI_API_KEY để AI đọc catalog/policy và trả lời.", "The AI API is not configured yet. Add OPENAI_API_KEY so the assistant can read catalog and policy data.")
+        : uiText("AI chưa trả lời được lúc này. Bạn thử lại sau vài giây hoặc chuyển sales để được hỗ trợ nhanh.", "The AI could not answer right now. Please try again in a few seconds or hand off to sales for quick support.");
     }
+    trackEvent("unanswered_intent", { query: value, source: "ai_error" });
     console.error("Assistant chat error:", error);
   } finally {
     assistantIsSending = false;
@@ -793,10 +1594,28 @@ async function sendAssistantPrompt(text) {
 }
 
 assistantToggle?.addEventListener("click", () => {
-  setAssistantOpen(!assistantPanel?.classList.contains("is-open"));
+  trackEvent("chat_icon_clicked", { source: "floating_icon" });
+  setAssistantOpen(!document.body.classList.contains("assistant-split-open"));
 });
 
 assistantClose?.addEventListener("click", () => setAssistantOpen(false));
+
+assistantResize?.addEventListener("click", () => {
+  document.body.classList.toggle("assistant-compact");
+  assistantResize.setAttribute(
+    "aria-label",
+    document.body.classList.contains("assistant-compact")
+      ? uiText("Mở rộng khung chat", "Expand chat panel")
+      : uiText("Thu gọn khung chat", "Compact chat panel"),
+  );
+});
+
+mobileSplitTabs?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-mobile-view]");
+  if (!button) return;
+  setMobileSplitView(button.dataset.mobileView);
+  trackEvent("mobile_split_tab_clicked", { view: button.dataset.mobileView });
+});
 
 assistantForm?.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -806,18 +1625,207 @@ assistantForm?.addEventListener("submit", (event) => {
 });
 
 document.querySelectorAll(".chat-suggestions button").forEach((button) => {
-  button.addEventListener("click", () => sendAssistantPrompt(button.textContent || ""));
-});
-
-document.addEventListener("click", (event) => {
-  if (!assistantPanel?.classList.contains("is-open")) return;
-  if (contactFloat?.contains(event.target)) return;
-  setAssistantOpen(false);
+  button.addEventListener("click", () => {
+    if (button.hasAttribute("data-open-lead")) {
+      openLeadForm("quick_prompt");
+      return;
+    }
+    if (isComparePrompt(button.textContent || "")) {
+      ensureCompareSelection();
+    }
+    sendAssistantPrompt(button.textContent || "");
+  });
 });
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") setAssistantOpen(false);
 });
+
+headerSearchForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const value = event.currentTarget.querySelector("input").value.trim();
+  if (value) applyCatalogSearch(value, { source: "header_search" });
+});
+
+catalogSearchForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  applyCatalogSearch(catalogSearchInput?.value || "", { source: "catalog_search" });
+});
+
+catalogCategoryFilter?.addEventListener("change", () => {
+  applyCatalogCategory(catalogCategoryFilter.value, { source: "catalog_filter" });
+});
+
+catalogBudgetFilter?.addEventListener("change", () => {
+  catalogState.selectedBudget = catalogBudgetFilter.value;
+  renderCatalogProducts();
+  trackEvent("search_submitted", { budget: catalogState.selectedBudget, source: "budget_filter" });
+});
+
+catalogAiPrompt?.addEventListener("click", () => {
+  const prompt = catalogState.query || uiText("Gợi ý laptop dưới 25 triệu", "Recommend a laptop under 25 million VND");
+  sendAssistantPrompt(prompt);
+});
+
+catalogResults?.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-action]");
+  if (!button) return;
+  const sku = button.dataset.sku;
+  const product = getProductBySku(sku);
+  if (!product) return;
+
+  if (button.dataset.action === "detail") {
+    renderProductDetail(product, "catalog_card");
+  }
+
+  if (button.dataset.action === "ask") {
+    focusProduct(sku);
+    sendAssistantPrompt(uiText(`Tư vấn sản phẩm ${product.name} SKU ${sku}`, `Give me advice for ${product.name} SKU ${sku}`));
+  }
+
+  if (button.dataset.action === "compare") {
+    const compareState = beginCompareSelection(product, "compare_button");
+    if (compareState.ready) {
+      sendAssistantPrompt(uiText("So sánh 2 sản phẩm đã chọn", "Compare the 2 selected products"));
+    } else {
+      setAssistantOpen(true);
+      addChatMessage(uiText(
+        `${compareState.reset ? "Mình đã làm mới cặp so sánh. " : ""}Đã chọn "${compactText(product.name, 64)}". Chọn thêm một sản phẩm nữa để mình dựng bảng so sánh.`,
+        `${compareState.reset ? "I refreshed the comparison pair. " : ""}Selected "${compactText(product.name, 64)}". Pick one more product and I will build the comparison table.`,
+      ), "bot");
+    }
+  }
+
+  if (button.dataset.action === "shortlist") {
+    catalogState.shortlistedSkus.add(sku);
+    rememberLocalSet("pv-shortlisted-skus", catalogState.shortlistedSkus);
+    renderCatalogProducts();
+    trackEvent("shortlist_added", { sku });
+  }
+
+  if (button.dataset.action === "cart") {
+    trackEvent("add_to_cart_demo", { sku, source: "catalog_card" });
+    addChatMessage(uiText(
+      `Đã ghi nhận "${compactText(product.name, 64)}" vào giỏ demo. Nếu muốn chốt nhanh, mình có thể chuyển sales gọi lại.`,
+      `I added "${compactText(product.name, 64)}" to the demo cart. If you want to close quickly, I can hand this off to sales for a callback.`,
+    ), "bot");
+    setAssistantOpen(true);
+  }
+});
+
+productDetailPanel?.addEventListener("click", (event) => {
+  const closeButton = event.target.closest("[data-close-detail]");
+  if (closeButton) {
+    productDetailPanel.hidden = true;
+    return;
+  }
+
+  const actionButton = event.target.closest("[data-detail-action]");
+  if (!actionButton) return;
+  const product = getProductBySku(actionButton.dataset.sku);
+  if (!product) return;
+
+  if (actionButton.dataset.detailAction === "ask") {
+    sendAssistantPrompt(uiText(`Tư vấn sản phẩm ${product.name} SKU ${product.sku}`, `Give me advice for ${product.name} SKU ${product.sku}`));
+  }
+
+  if (actionButton.dataset.detailAction === "compare") {
+    const compareState = beginCompareSelection(product, "detail_drawer");
+    if (compareState.ready) {
+      sendAssistantPrompt(uiText("So sánh 2 sản phẩm đã chọn", "Compare the 2 selected products"));
+    } else {
+      setAssistantOpen(true);
+      addChatMessage(uiText(
+        `${compareState.reset ? "Mình đã làm mới cặp so sánh. " : ""}Đã đưa "${compactText(product.name, 64)}" vào so sánh. Chọn thêm một sản phẩm nữa để so sánh.`,
+        `${compareState.reset ? "I refreshed the comparison pair. " : ""}Added "${compactText(product.name, 64)}" to comparison. Pick one more product to compare.`,
+      ), "bot");
+    }
+  }
+});
+
+assistantBody?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-reco-action]");
+  if (!button) return;
+  const sku = button.dataset.sku;
+  trackEvent("recommendation_clicked", { sku, action: button.dataset.recoAction });
+  if (button.dataset.recoAction === "view") focusProduct(sku);
+  if (button.dataset.recoAction === "detail") {
+    const product = getProductBySku(sku);
+    renderProductDetail(product, "recommendation_card");
+    focusProduct(sku);
+  }
+  if (button.dataset.recoAction === "ask") {
+    const product = getProductBySku(sku);
+    sendAssistantPrompt(uiText(`So sánh và giải thích vì sao nên chọn ${product?.name || sku}`, `Compare and explain why I should choose ${product?.name || sku}`));
+  }
+});
+
+document.querySelector("[data-close-lead]")?.addEventListener("click", () => {
+  leadForm.hidden = true;
+});
+
+leadForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const formData = new FormData(leadForm);
+  const payload = {
+    sessionId: assistantSessionId,
+    anonymousUserId,
+    name: String(formData.get("name") || "").trim(),
+    phone: String(formData.get("phone") || "").trim(),
+    email: String(formData.get("email") || "").trim(),
+    need: String(formData.get("need") || catalogState.query || catalogState.userNeed || uiText("Cần tư vấn sản phẩm", "Needs product advice")).trim(),
+    preferredContactTime: String(formData.get("preferredContactTime") || "").trim(),
+    budgetRange: getBudgetRange(),
+    consent: formData.get("consent") === "on",
+  };
+
+  if (!payload.name || !payload.phone || !payload.consent) {
+    addChatMessage(uiText("Bạn nhập tên, số điện thoại và tick đồng ý để mình chuyển sales nhé.", "Please enter your name and phone number, then tick consent so I can hand this off to sales."), "bot");
+    return;
+  }
+
+  try {
+    await fetch("/api/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+  } catch (error) {
+    console.info("Lead fallback:", payload, error);
+  }
+
+  leadForm.reset();
+  leadForm.hidden = true;
+  trackEvent("lead_submitted", { source: "assistant_pane" });
+  addChatMessage(uiText("Đã gửi yêu cầu cho sales. Trong demo này mình cũng ghi lại lead event để đo conversion assisted.", "I sent the request to sales. This demo also logs the lead event so we can measure assisted conversion."), "bot");
+});
+
+async function loadCatalogProducts() {
+  try {
+    const response = await fetch("data/phongvu-catalog/demo-products.json");
+    if (!response.ok) throw new Error("Catalog not found");
+    const products = await response.json();
+    catalogState.products = products
+      .filter((product) => product?.sku && product?.name)
+      .map((product) => ({
+        ...product,
+        priceFormatted: product.priceFormatted || formatVnd(product.price),
+    }));
+    populateCatalogFilters();
+    clearCatalogIntentContext();
+    catalogState.selectedCategory = "laptop";
+    if (catalogCategoryFilter) catalogCategoryFilter.value = "laptop";
+    renderCatalogProducts();
+    updateKpiPanel();
+  } catch (error) {
+    if (catalogCount) catalogCount.textContent = "Không tải được catalog demo";
+    if (catalogContext) catalogContext.textContent = "Kiểm tra file data/phongvu-catalog/demo-products.json";
+    console.error("Catalog load error:", error);
+  }
+}
+
+loadCatalogProducts();
+trackEvent("page_view", { path: window.location.pathname || "/" });
 
 const revealItems = document.querySelectorAll(".reveal");
 const observer = new IntersectionObserver((entries) => {
@@ -866,7 +1874,10 @@ function closeMegaMenu() {
 categoryLinks.forEach((link) => {
   link.addEventListener("mouseenter", () => renderMegaMenu(link.dataset.menu));
   link.addEventListener("focus", () => renderMegaMenu(link.dataset.menu));
-  link.addEventListener("click", (event) => event.preventDefault());
+  link.addEventListener("click", (event) => {
+    event.preventDefault();
+    applyCatalogCategory(catalogSlugFromMenuKey(link.dataset.menu), { source: "hero_category_menu" });
+  });
 });
 
 heroLayout?.addEventListener("mouseleave", closeMegaMenu);
@@ -945,6 +1956,11 @@ function applyLanguage(language) {
   translateAttributes(language);
   updateLanguageButton(language);
   updateLanguageDecorations(language);
+  if (catalogState.products.length) {
+    renderCatalogProducts();
+  } else {
+    renderContextChips();
+  }
 
   const activeMenu = categoryLinks.find((link) => link.classList.contains("is-active"));
   if (activeMenu) renderMegaMenu(activeMenu.dataset.menu);

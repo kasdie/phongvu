@@ -341,6 +341,67 @@
             </article>
           </div>
         </section>
+
+        <section class="catalog-workspace reveal" id="catalogWorkspace" aria-label="AI sales product discovery">
+          <div class="catalog-hero">
+            <div>
+              <span>AI Sales Agent</span>
+              <h2>Tìm đúng sản phẩm trong lúc đang chat</h2>
+              <p>Catalog demo được nối trực tiếp với search, category, recommendation và lead handoff để trình diễn luồng product discovery.</p>
+            </div>
+            <div class="catalog-kpi-panel" aria-label="KPI demo">
+              <strong>KPI live demo</strong>
+              <dl>
+                <div><dt>Page views</dt><dd data-kpi="page_view">0</dd></div>
+                <div><dt>Chat clicks</dt><dd data-kpi="chat_icon_clicked">0</dd></div>
+                <div><dt>Search</dt><dd data-kpi="search_submitted">0</dd></div>
+                <div><dt>Reco clicks</dt><dd data-kpi="recommendation_clicked">0</dd></div>
+                <div><dt>Handoff</dt><dd data-kpi="handoff_requested">0</dd></div>
+                <div><dt>Leads</dt><dd data-kpi="lead_submitted">0</dd></div>
+              </dl>
+            </div>
+          </div>
+
+          <div class="catalog-controls">
+            <form class="catalog-search-form">
+              <input type="search" placeholder="Thử: laptop học lập trình dưới 20 triệu" aria-label="Tìm sản phẩm trong catalog demo">
+              <button type="submit">Tìm</button>
+            </form>
+            <div class="catalog-filter-row" aria-label="Lọc nhanh">
+              <select class="catalog-category-filter" aria-label="Lọc theo danh mục">
+                <option value="">Tất cả danh mục</option>
+              </select>
+              <select class="catalog-budget-filter" aria-label="Lọc theo ngân sách">
+                <option value="">Mọi ngân sách</option>
+                <option value="0-10000000">Dưới 10 triệu</option>
+                <option value="10000000-20000000">10 - 20 triệu</option>
+                <option value="20000000-30000000">20 - 30 triệu</option>
+                <option value="30000000-999999999">Trên 30 triệu</option>
+              </select>
+              <button class="catalog-ai-prompt" type="button">Nhờ AI tư vấn</button>
+            </div>
+          </div>
+
+          <div class="catalog-status" aria-live="polite">
+            <strong data-catalog-count>Đang tải catalog...</strong>
+            <span data-catalog-context>Chọn danh mục hoặc hỏi AI để bắt đầu.</span>
+          </div>
+
+          <div class="catalog-layout">
+            <aside class="catalog-insights" aria-label="Ngữ cảnh mua hàng">
+              <h3>Ngữ cảnh AI đang dùng</h3>
+              <div class="context-chip-list" data-context-chips>
+                <span>Chưa có nhu cầu</span>
+              </div>
+              <h3>Event mới</h3>
+              <ol class="event-stream" data-event-stream>
+                <li>Đang chờ thao tác demo...</li>
+              </ol>
+            </aside>
+            <div class="catalog-results" data-catalog-results aria-live="polite"></div>
+            <aside class="product-detail-drawer" data-product-detail hidden aria-label="Chi tiết sản phẩm được chọn"></aside>
+          </div>
+        </section>
       </div>
     </main>
 
@@ -361,28 +422,54 @@
         <img src="assets/images/logos/logo.svg" alt="">
       </button>
       <b>Trò chuyện với<br>trợ lý ảo</b>
-      <section class="assistant-chat" id="assistantChatPanel" aria-label="Trò chuyện với trợ lý ảo" aria-hidden="true">
-        <header>
-          <span><img src="assets/images/logos/logo.svg" alt=""></span>
-          <div>
-            <strong>Phong Vũ</strong>
-            <small>Trợ lý ảo luôn sẵn sàng</small>
-          </div>
-          <button class="assistant-close" type="button" aria-label="Đóng">×</button>
-        </header>
-        <div class="assistant-chat-body" aria-live="polite">
-          <p class="chat-message bot">Xin chào! Tôi có thể giúp bạn tìm laptop, PC hoặc khuyến mãi phù hợp.</p>
-          <div class="chat-suggestions">
-            <button type="button">Tư vấn laptop</button>
-            <button type="button">Tìm khuyến mãi</button>
-            <button type="button">Hỗ trợ đơn hàng</button>
-          </div>
+    </div>
+
+    <aside class="assistant-chat sales-agent-pane" id="assistantChatPanel" aria-label="AI Sales Agent Phong Vũ" aria-hidden="true">
+      <header>
+        <span><img src="assets/images/logos/logo.svg" alt=""></span>
+        <div>
+          <strong>AI Sales Agent</strong>
+          <small>Đang đọc catalog và ngữ cảnh mua hàng</small>
         </div>
-        <form class="assistant-chat-form">
-          <input type="text" placeholder="Nhập nội dung..." aria-label="Nhập nội dung chat">
-          <button type="submit" aria-label="Gửi tin nhắn">➤</button>
-        </form>
-      </section>
+        <button class="assistant-resize" type="button" aria-label="Thu gọn khung chat">↔</button>
+        <button class="assistant-close" type="button" aria-label="Đóng">×</button>
+      </header>
+      <div class="assistant-context-bar" data-assistant-context>
+        <span>Catalog demo</span>
+        <span>FAQ chính sách</span>
+        <span>Lead handoff</span>
+      </div>
+      <div class="assistant-chat-body" aria-live="polite">
+        <p class="chat-message bot">Xin chào! Hãy thử hỏi: “laptop học lập trình dưới 20 triệu”. Mình sẽ lọc store và đề xuất sản phẩm ngay trong màn hình này.</p>
+        <div class="chat-suggestions">
+          <button type="button">Laptop học lập trình dưới 20 triệu</button>
+          <button type="button">So sánh 2 sản phẩm đã chọn</button>
+          <button type="button">Chính sách bảo hành laptop</button>
+          <button type="button" data-open-lead>Can sales goi lai</button>
+        </div>
+      </div>
+      <form class="lead-capture-form" data-lead-form hidden>
+        <strong>Chuyển sales tư vấn nhanh</strong>
+        <input name="name" type="text" placeholder="Tên của bạn" aria-label="Tên của bạn">
+        <input name="phone" type="tel" placeholder="Số điện thoại" aria-label="Số điện thoại">
+        <input name="email" type="email" placeholder="Email (không bắt buộc)" aria-label="Email không bắt buộc">
+        <input name="need" type="text" placeholder="Nhu cầu/ngân sách" aria-label="Nhu cầu hoặc ngân sách">
+        <input name="preferredContactTime" type="text" placeholder="Thời gian muốn nhận cuộc gọi" aria-label="Thời gian muốn nhận cuộc gọi">
+        <label><input name="consent" type="checkbox"> Tôi đồng ý để Phong Vũ liên hệ tư vấn.</label>
+        <div>
+          <button type="submit">Gửi lead</button>
+          <button type="button" data-close-lead>Để sau</button>
+        </div>
+      </form>
+      <form class="assistant-chat-form">
+        <input type="text" placeholder="Nhập nhu cầu, ngân sách hoặc SKU..." aria-label="Nhập nội dung chat">
+        <button type="submit" aria-label="Gửi tin nhắn">➤</button>
+      </form>
+    </aside>
+
+    <div class="mobile-split-tabs" data-mobile-split-tabs aria-label="Chuyển giữa cửa hàng và chat">
+      <button type="button" data-mobile-view="store">Cửa hàng</button>
+      <button type="button" data-mobile-view="chat" class="is-active">Chat</button>
     </div>
   </div>
 
