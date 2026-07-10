@@ -8,7 +8,7 @@
     "deploy": "vercel --prod",
     "vercel:dev": "vercel dev",
     "demo:server": "node dev-server.mjs",
-    "demo:phongvu": "node tools/scrape-phongvu-catalog.mjs --demo-sample --sample-per-category 10 --sample-pool-size 10 --delay-ms 150 --timeout-ms 10000",
+    "demo:phongvu": "node tools/scrape-phongvu-catalog.mjs --demo-sample --sample-per-category 30 --sample-pool-size 60 --delay-ms 150 --timeout-ms 15000",
     "scrape:phongvu": "node tools/scrape-phongvu-catalog.mjs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

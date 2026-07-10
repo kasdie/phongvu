@@ -1,122 +1,167 @@
 [
-    {
-        "categorySlug":  "dien-may-dien-gia-dung",
-        "categoryName":  "Điện máy - Điện gia dụng",
-        "selectedCount":  10,
-        "minPrice":  390000,
-        "maxPrice":  99900000,
-        "status":  "ok"
-    },
-    {
-        "categorySlug":  "dien-thoai-may-tinh-bang-phu-kien",
-        "categoryName":  "Điện thoại, Tablet, Phụ kiện",
-        "selectedCount":  10,
-        "minPrice":  99000,
-        "maxPrice":  14990000,
-        "status":  "ok"
-    },
-    {
-        "categorySlug":  "do-gia-dung",
-        "categoryName":  "Đồ gia dụng",
-        "selectedCount":  10,
-        "minPrice":  129000,
-        "maxPrice":  34900000,
-        "status":  "ok"
-    },
-    {
-        "categorySlug":  "giai-phap-doanh-nghiep",
-        "categoryName":  "Giải pháp doanh nghiệp",
-        "selectedCount":  10,
-        "minPrice":  250000,
-        "maxPrice":  9990000,
-        "status":  "ok"
-    },
-    {
-        "categorySlug":  "hang-thanh-ly",
-        "categoryName":  "Hàng thanh lý",
-        "selectedCount":  10,
-        "minPrice":  135000,
-        "maxPrice":  31690000,
-        "status":  "ok"
-    },
-    {
-        "categorySlug":  "h-gaming-gear",
-        "categoryName":  "Gaming Gear",
-        "selectedCount":  16,
-        "minPrice":  75000,
-        "maxPrice":  18999000,
-        "status":  "ok"
-    },
-    {
-        "categorySlug":  "laptop",
-        "categoryName":  "Laptop",
-        "selectedCount":  10,
-        "minPrice":  12490000,
-        "maxPrice":  199990000,
-        "status":  "ok"
-    },
-    {
-        "categorySlug":  "linh-kien-may-tinh",
-        "categoryName":  "Linh kiện máy tính",
-        "selectedCount":  32,
-        "minPrice":  1190000,
-        "maxPrice":  114900000,
-        "status":  "ok"
-    },
-    {
-        "categorySlug":  "man-hinh-may-tinh",
-        "categoryName":  "Màn hình máy tính",
-        "selectedCount":  10,
-        "minPrice":  1290000,
-        "maxPrice":  75990000,
-        "status":  "ok"
-    },
-    {
-        "categorySlug":  "may-tinh-de-ban",
-        "categoryName":  "PC - Máy tính để bàn",
-        "selectedCount":  10,
-        "minPrice":  11490000,
-        "maxPrice":  139390000,
-        "status":  "ok"
-    },
-    {
-        "categorySlug":  "phu-kien-chung",
-        "categoryName":  "Phụ kiện",
-        "selectedCount":  18,
-        "minPrice":  11000,
-        "maxPrice":  32990000,
-        "status":  "ok"
-    },
-    {
-        "categorySlug":  "phu-kien-pc",
-        "categoryName":  "Phụ kiện máy tính",
-        "selectedCount":  29,
-        "minPrice":  20000,
-        "maxPrice":  18999000,
-        "status":  "ok"
-    },
-    {
-        "categorySlug":  "san-pham-apple",
-        "categoryName":  "Sản phẩm Apple",
-        "selectedCount":  10,
-        "minPrice":  18990000,
-        "maxPrice":  132990000,
-        "status":  "ok"
-    },
-    {
-        "categorySlug":  "thiet-bi-am-thanh",
-        "categoryName":  "Thiết bị âm thanh",
-        "selectedCount":  15,
-        "minPrice":  115000,
-        "maxPrice":  13800000,
-        "status":  "ok"
-    },
-    {
-        "categorySlug":  "thiet-bi-van-phong",
-        "categoryName":  "Thiết bị văn phòng",
-        "selectedCount":  15,
-        "minPrice":  169000,
-        "maxPrice":  8190000,
-        "status":  "ok"
-    }
+  {
+    "categorySlug": "phu-kien-pc",
+    "categoryName": "Phụ kiện máy tính",
+    "sourceUrlCount": 924,
+    "candidateCount": 922,
+    "selectedCount": 30,
+    "targetCount": 30,
+    "minPrice": 20000,
+    "maxPrice": 10999000,
+    "status": "ok"
+  },
+  {
+    "categorySlug": "h-gaming-gear",
+    "categoryName": "Gaming Gear",
+    "sourceUrlCount": 360,
+    "candidateCount": 358,
+    "selectedCount": 30,
+    "targetCount": 30,
+    "minPrice": 99000,
+    "maxPrice": 8280000,
+    "status": "ok"
+  },
+  {
+    "categorySlug": "thiet-bi-van-phong",
+    "categoryName": "Thiết bị văn phòng",
+    "sourceUrlCount": 1029,
+    "candidateCount": 69,
+    "selectedCount": 30,
+    "targetCount": 30,
+    "minPrice": 169000,
+    "maxPrice": 8190000,
+    "status": "ok"
+  },
+  {
+    "categorySlug": "phu-kien-chung",
+    "categoryName": "Phụ kiện",
+    "sourceUrlCount": 2560,
+    "candidateCount": 832,
+    "selectedCount": 30,
+    "targetCount": 30,
+    "minPrice": 11000,
+    "maxPrice": 15490000,
+    "status": "ok"
+  },
+  {
+    "categorySlug": "laptop",
+    "categoryName": "Laptop",
+    "sourceUrlCount": 421,
+    "candidateCount": 421,
+    "selectedCount": 30,
+    "targetCount": 30,
+    "minPrice": 12490000,
+    "maxPrice": 199990000,
+    "status": "ok"
+  },
+  {
+    "categorySlug": "san-pham-apple",
+    "categoryName": "Sản phẩm Apple",
+    "sourceUrlCount": 591,
+    "candidateCount": 40,
+    "selectedCount": 30,
+    "targetCount": 30,
+    "minPrice": 18990000,
+    "maxPrice": 132990000,
+    "status": "ok"
+  },
+  {
+    "categorySlug": "man-hinh-may-tinh",
+    "categoryName": "Màn hình máy tính",
+    "sourceUrlCount": 527,
+    "candidateCount": 527,
+    "selectedCount": 30,
+    "targetCount": 30,
+    "minPrice": 1290000,
+    "maxPrice": 55990000,
+    "status": "ok"
+  },
+  {
+    "categorySlug": "hang-thanh-ly",
+    "categoryName": "Hàng thanh lý",
+    "sourceUrlCount": 1251,
+    "candidateCount": 71,
+    "selectedCount": 30,
+    "targetCount": 30,
+    "minPrice": 20000,
+    "maxPrice": 31690000,
+    "status": "ok"
+  },
+  {
+    "categorySlug": "giai-phap-doanh-nghiep",
+    "categoryName": "Giải pháp doanh nghiệp",
+    "sourceUrlCount": 32,
+    "candidateCount": 14,
+    "selectedCount": 14,
+    "targetCount": 30,
+    "minPrice": 250000,
+    "maxPrice": 9990000,
+    "status": "partial"
+  },
+  {
+    "categorySlug": "dien-may-dien-gia-dung",
+    "categoryName": "Điện máy - Điện gia dụng",
+    "sourceUrlCount": 933,
+    "candidateCount": 66,
+    "selectedCount": 30,
+    "targetCount": 30,
+    "minPrice": 150000,
+    "maxPrice": 99900000,
+    "status": "ok"
+  },
+  {
+    "categorySlug": "thiet-bi-am-thanh",
+    "categoryName": "Thiết bị âm thanh",
+    "sourceUrlCount": 884,
+    "candidateCount": 60,
+    "selectedCount": 30,
+    "targetCount": 30,
+    "minPrice": 99000,
+    "maxPrice": 13800000,
+    "status": "ok"
+  },
+  {
+    "categorySlug": "dien-thoai-may-tinh-bang-phu-kien",
+    "categoryName": "Điện thoại, Tablet, Phụ kiện",
+    "sourceUrlCount": 114,
+    "candidateCount": 60,
+    "selectedCount": 30,
+    "targetCount": 30,
+    "minPrice": 99000,
+    "maxPrice": 46990000,
+    "status": "ok"
+  },
+  {
+    "categorySlug": "linh-kien-may-tinh",
+    "categoryName": "Linh kiện máy tính",
+    "sourceUrlCount": 1787,
+    "candidateCount": 60,
+    "selectedCount": 30,
+    "targetCount": 30,
+    "minPrice": 149000,
+    "maxPrice": 114900000,
+    "status": "ok"
+  },
+  {
+    "categorySlug": "may-tinh-de-ban",
+    "categoryName": "PC - Máy tính để bàn",
+    "sourceUrlCount": 93,
+    "candidateCount": 60,
+    "selectedCount": 30,
+    "targetCount": 30,
+    "minPrice": 6490000,
+    "maxPrice": 139390000,
+    "status": "ok"
+  },
+  {
+    "categorySlug": "do-gia-dung",
+    "categoryName": "Đồ gia dụng",
+    "sourceUrlCount": 1249,
+    "candidateCount": 60,
+    "selectedCount": 30,
+    "targetCount": 30,
+    "minPrice": 129000,
+    "maxPrice": 28590000,
+    "status": "ok"
+  }
 ]

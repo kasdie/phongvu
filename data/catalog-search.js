@@ -76,10 +76,15 @@ export function parseBudgetFromText(text) {
     };
   }
 
-  const millionMatch = normalized.match(/(?:duoi|toi da|tam|khoang|under)?\s*(\d+(?:\.\d+)?)\s*(?:trieu|tr|m)/);
-  if (!millionMatch) return null;
+  const thousandRangeMatch = normalized.match(/(\d+(?:\.\d+)?)\s*(?:-|den|toi)\s*(\d+(?:\.\d+)?)\s*(?:k|nghin|ngan)/);
+  if (thousandRangeMatch) {
+    return {
+      min: Number(thousandRangeMatch[1]) * 1000,
+      max: Number(thousandRangeMatch[2]) * 1000,
+      strictMax: true,
+    };
+  }
 
-  const amount = Number(millionMatch[1]) * 1000000;
   const strictBudget = [
     "duoi",
     "toi da",
@@ -89,6 +94,21 @@ export function parseBudgetFromText(text) {
     "budget toi chi co",
     "budget chi co",
   ].some((keyword) => normalized.includes(keyword));
+
+  const thousandMatch = normalized.match(/(?:duoi|toi da|tam|khoang|under)?\s*(\d+(?:\.\d+)?)\s*(?:k|nghin|ngan)/);
+  if (thousandMatch) {
+    const amount = Number(thousandMatch[1]) * 1000;
+    if (strictBudget) return { min: 0, max: amount, strictMax: true };
+    if (normalized.includes("tren")) return { min: amount, max: 999999999 };
+
+    const delta = Math.max(50000, amount * 0.2);
+    return { min: Math.max(0, amount - delta), max: amount + delta, strictMax: false };
+  }
+
+  const millionMatch = normalized.match(/(?:duoi|toi da|tam|khoang|under)?\s*(\d+(?:\.\d+)?)\s*(?:trieu|tr|m)/);
+  if (!millionMatch) return null;
+
+  const amount = Number(millionMatch[1]) * 1000000;
 
   if (strictBudget) {
     return { min: 0, max: amount, strictMax: true };

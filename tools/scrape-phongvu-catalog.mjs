@@ -650,7 +650,59 @@ function pricedProducts(products) {
 
 function pickPriceDiverse(products, count) {
   const sorted = uniqueBy(products, "sourceUrl").sort((a, b) => a.price - b.price);
-  return pickSpread(sorted, count);
+  if (sorted.length <= count) return sorted;
+
+  const prices = sorted.map((product) => product.price).filter((price) => Number.isFinite(price) && price > 0);
+  const minPrice = Math.min(...prices);
+  const maxPrice = Math.max(...prices);
+  if (!Number.isFinite(minPrice) || !Number.isFinite(maxPrice) || minPrice === maxPrice) {
+    return pickSpread(sorted, count);
+  }
+
+  const bucketCount = Math.min(8, count, sorted.length);
+  const buckets = Array.from({ length: bucketCount }, () => []);
+  const logMin = Math.log(minPrice);
+  const logMax = Math.log(maxPrice);
+
+  for (const product of sorted) {
+    const ratio = (Math.log(product.price) - logMin) / Math.max(0.000001, logMax - logMin);
+    const bucketIndex = Math.max(0, Math.min(bucketCount - 1, Math.floor(ratio * bucketCount)));
+    buckets[bucketIndex].push(product);
+  }
+
+  const selected = [];
+  const used = new Set();
+  const bucketPicks = buckets.map((bucket) => pickSpread(bucket, Math.min(bucket.length, Math.ceil(count / bucketCount) + 1)));
+
+  while (selected.length < count && bucketPicks.some((bucket) => bucket.length)) {
+    for (const bucket of bucketPicks) {
+      const product = bucket.shift();
+      if (!product) continue;
+      const key = product.sourceUrl || product.sku;
+      if (used.has(key)) continue;
+      selected.push(product);
+      used.add(key);
+      if (selected.length >= count) break;
+    }
+  }
+
+  for (const product of pickSpread(sorted, count * 2)) {
+    if (selected.length >= count) break;
+    const key = product.sourceUrl || product.sku;
+    if (used.has(key)) continue;
+    selected.push(product);
+    used.add(key);
+  }
+
+  for (const product of sorted) {
+    if (selected.length >= count) break;
+    const key = product.sourceUrl || product.sku;
+    if (used.has(key)) continue;
+    selected.push(product);
+    used.add(key);
+  }
+
+  return selected.sort((a, b) => a.price - b.price);
 }
 
 function pickSpread(items, count) {
