@@ -243,7 +243,6 @@ const englishText = {
   "Danh mục nổi bật": "Featured categories",
   "Xem tất cả ›": "View all ›",
   "Liên hệ nhanh": "Quick contact",
-  "Lên đầu trang": "Back to top",
   "Trò chuyện với": "Chat with",
   "trợ lý ảo": "virtual assistant",
   "Trò chuyện với trợ lý ảo": "Chat with virtual assistant",
@@ -727,10 +726,6 @@ slider?.addEventListener("mouseenter", () => window.clearInterval(autoplayId));
 slider?.addEventListener("mouseleave", restartAutoplay);
 slider?.addEventListener("focusin", () => window.clearInterval(autoplayId));
 slider?.addEventListener("focusout", restartAutoplay);
-
-document.querySelector(".back-top")?.addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
 
 const flashCountdownLabel = document.querySelector("[data-flash-countdown-label]");
 const flashCountdownBoxes = [...document.querySelectorAll(".flash-sale-section .countdown b")];
