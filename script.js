@@ -175,7 +175,9 @@ const englishText = {
   "Phong Vũ": "Phong Vu",
   "Danh mục sản phẩm": "Product categories",
   "Bạn muốn mua gì hôm nay...": "What would you like to buy today...",
+  "Thử: laptop văn phòng mỏng nhẹ dưới 18 triệu": "Try: thin-and-light office laptop under 18 million VND",
   "Tìm kiếm sản phẩm": "Search products",
+  "Tìm sản phẩm trong catalog demo": "Search products in the demo catalog",
   "Tìm kiếm": "Search",
   "Từ khóa gợi ý": "Suggested keywords",
   "Màn Hình": "Monitor",
@@ -250,11 +252,11 @@ const englishText = {
   "Gửi tin nhắn": "Send message",
   "Đang đọc catalog và ngữ cảnh mua hàng": "Reading catalog and shopping context",
   "FAQ chính sách": "Policy FAQ",
-  "Xin chào! Hãy thử hỏi: “laptop học lập trình dưới 20 triệu”. Mình sẽ lọc store và đề xuất sản phẩm ngay trong màn hình này.": "Hello! Try asking: \"programming laptop under 20 million VND\". I will filter the store and recommend products right in this screen.",
-  "Laptop học lập trình dưới 20 triệu": "Programming laptop under 20 million VND",
-  "So sánh 2 sản phẩm đã chọn": "Compare the 2 selected products",
-  "Chính sách bảo hành laptop": "Laptop warranty policy",
-  "Can sales goi lai": "Need sales callback",
+  "Xin chào! Hãy thử hỏi: “laptop văn phòng mỏng nhẹ dưới 18 triệu”. Mình sẽ lọc store và đề xuất sản phẩm ngay trong màn hình này.": "Hello! Try asking: \"thin-and-light office laptop under 18 million VND\". I will filter the store and recommend products right in this screen.",
+  "Laptop văn phòng mỏng nhẹ dưới 18 triệu": "Thin-and-light office laptop under 18 million VND",
+  "So sánh 2 sản phẩm đang xem": "Compare the 2 viewed products",
+  "Màn hình 27 inch làm việc tại nhà": "27-inch monitor for working from home",
+  "Cần sales tư vấn cấu hình": "Need sales advice on a build",
   "Chuyển sales tư vấn nhanh": "Hand off to sales",
   "Tên của bạn": "Your name",
   "Số điện thoại": "Phone number",
@@ -1663,7 +1665,7 @@ catalogBudgetFilter?.addEventListener("change", () => {
 });
 
 catalogAiPrompt?.addEventListener("click", () => {
-  const prompt = catalogState.query || uiText("Gợi ý laptop dưới 25 triệu", "Recommend a laptop under 25 million VND");
+  const prompt = catalogState.query || uiText("Gợi ý laptop văn phòng dưới 18 triệu", "Recommend an office laptop under 18 million VND");
   sendAssistantPrompt(prompt);
 });
 
@@ -1686,7 +1688,7 @@ catalogResults?.addEventListener("click", (event) => {
   if (button.dataset.action === "compare") {
     const compareState = beginCompareSelection(product, "compare_button");
     if (compareState.ready) {
-      sendAssistantPrompt(uiText("So sánh 2 sản phẩm đã chọn", "Compare the 2 selected products"));
+      sendAssistantPrompt(uiText("So sánh 2 sản phẩm đang xem", "Compare the 2 viewed products"));
     } else {
       setAssistantOpen(true);
       addChatMessage(uiText(
@@ -1732,7 +1734,7 @@ productDetailPanel?.addEventListener("click", (event) => {
   if (actionButton.dataset.detailAction === "compare") {
     const compareState = beginCompareSelection(product, "detail_drawer");
     if (compareState.ready) {
-      sendAssistantPrompt(uiText("So sánh 2 sản phẩm đã chọn", "Compare the 2 selected products"));
+      sendAssistantPrompt(uiText("So sánh 2 sản phẩm đang xem", "Compare the 2 viewed products"));
     } else {
       setAssistantOpen(true);
       addChatMessage(uiText(
