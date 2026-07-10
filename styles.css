@@ -1666,9 +1666,7 @@ button {
   padding: 28px 20px;
   color: #fff;
   text-align: center;
-  background:
-    radial-gradient(circle at 50% 26%, rgba(255,255,255,.85) 0 70px, transparent 72px),
-    linear-gradient(#ffbb53, #ffe3a7);
+  background: linear-gradient(#ffbb53, #ffe3a7);
 }
 
 .flash-logo {
@@ -1678,6 +1676,10 @@ button {
   font-weight: 900;
   text-transform: uppercase;
   text-shadow: 2px 2px 0 #fff, 3px 3px 0 #da2d25;
+}
+
+.flash-logo strong {
+  display: inline-block;
 }
 
 .flash-logo span {
@@ -3491,21 +3493,32 @@ body.assistant-split-open .sales-agent-pane {
   gap: 12px;
   padding: 46px 20px 22px;
   align-content: start;
-  background:
-    radial-gradient(circle at 50% 47%, rgba(255,255,255,.88) 0 72px, transparent 74px),
-    linear-gradient(#ffbd50 0%, #ffe6ac 100%);
+  background: linear-gradient(#ffbd50 0%, #ffe6ac 100%);
 }
 
 .flash-sale-section .flash-logo {
+  width: 196px;
   margin-top: 2px;
   font-size: 28px;
+  line-height: .95;
   letter-spacing: 0;
+  text-align: center;
+}
+
+.flash-sale-section .flash-logo strong {
+  display: inline-block;
+  min-width: 154px;
+  text-align: center;
 }
 
 .flash-sale-section .flash-logo span {
+  width: 196px;
+  box-sizing: border-box;
   margin-top: 7px;
-  padding: 3px 20px;
+  padding: 3px 18px 4px;
   font-size: 17px;
+  line-height: 1;
+  text-align: center;
 }
 
 .flash-sale-section .flash-info p {
@@ -3532,15 +3545,18 @@ body.assistant-split-open .sales-agent-pane {
 }
 
 .flash-sale-section .flash-info a {
-  min-width: 198px;
+  width: 204px;
+  max-width: 100%;
+  box-sizing: border-box;
   min-height: 34px;
   display: inline-grid;
   place-items: center;
-  padding: 7px 18px;
+  padding: 7px 12px;
   border-radius: 999px;
   background: #d82135;
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .flash-sale-section .product-row {
