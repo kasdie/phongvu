@@ -413,7 +413,9 @@ button {
 }
 
 .cart-svg {
-  width: 34px;
+  width: 36px;
+  height: 36px;
+  stroke-width: 1.95;
 }
 
 .main-content {
@@ -3500,24 +3502,39 @@ body.assistant-split-open .sales-agent-pane {
 }
 
 .flash-sale-section .flash-logo {
-  width: 196px;
-  margin-top: 2px;
+  position: relative;
+  width: 220px;
+  margin: 2px auto 0;
+  display: grid;
+  justify-items: center;
+  row-gap: 7px;
   font-size: 28px;
   line-height: .95;
   letter-spacing: 0;
   text-align: center;
 }
 
+.flash-sale-section .flash-logo i {
+  position: absolute;
+  top: -2px;
+  left: 2px;
+  width: 28px;
+  font-style: normal;
+  line-height: 1;
+  text-align: center;
+}
+
 .flash-sale-section .flash-logo strong {
-  display: inline-block;
-  min-width: 154px;
+  display: block;
+  width: 168px;
+  min-width: 0;
   text-align: center;
 }
 
 .flash-sale-section .flash-logo span {
-  width: 196px;
+  width: 220px;
   box-sizing: border-box;
-  margin-top: 7px;
+  margin-top: 0;
   padding: 3px 18px 4px;
   font-size: 17px;
   line-height: 1;
