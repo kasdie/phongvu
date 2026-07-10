@@ -210,6 +210,10 @@ const englishText = {
   "Xả kho trưng bày": "Display clearance",
   "Dải ưu đãi hè": "Summer deals strip",
   "Flash sale online": "Online flash sale",
+  "Giảm Đến 200K": "Save up to 200K",
+  "Ưu Đãi Sốc Đến 22%": "Shock deals up to 22%",
+  "Camera & Phụ Kiện": "Camera & Accessories",
+  "MUA NGAY KẺO HẾT!!!": "BUY NOW BEFORE IT ENDS!!!",
   "Máy In & Mực": "Printers & Ink",
   "Camera-Phụ Kiện": "Cameras - Accessories",
   "Coupon Đến 1TR": "Coupons up to 1M",
@@ -847,6 +851,265 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+const flashSaleProducts = {
+  laptop: [
+    {
+      brand: "ACER",
+      name: "Laptop Acer Aspire Go 15 AG15-72P-54GY Core 5...",
+      image: "assets/images/categories/unnamed (3).webp",
+      price: 19990000,
+      oldPrice: 24990000,
+      save: 5000000,
+    },
+    {
+      brand: "HP",
+      name: "Laptop HP 14-ep1007TU-9Z2W1PA Core 7...",
+      image: "assets/images/categories/unnamed.webp",
+      price: 23990000,
+      oldPrice: 27990000,
+      save: 4000000,
+    },
+    {
+      brand: "ACER",
+      name: "Laptop Acer Nitro Lite 16 NL16-71G-56WQ i5...",
+      image: "assets/images/categories/unnamed (1).webp",
+      price: 24490000,
+      oldPrice: 29590000,
+      save: 5100000,
+    },
+    {
+      brand: "ACER",
+      name: "Laptop Acer Nitro ProPanel ANV15-51-56D5 i5...",
+      image: "assets/images/categories/unnamed (2).webp",
+      price: 24990000,
+      oldPrice: 27990000,
+      save: 3000000,
+    },
+    {
+      brand: "DELL",
+      name: "Laptop Dell 16 DC16250-C7U161W11BLU Core 7...",
+      image: "assets/images/categories/unnamed (4).webp",
+      price: 27690000,
+      oldPrice: 29890000,
+      save: 2200000,
+    },
+  ],
+  gear: [
+    {
+      brand: "KINGMASTER",
+      name: "Miếng lót chuột Kingmaster KM-M1 Tiếng Việt",
+      image: "https://lh3.googleusercontent.com/IUFtA13pk9gQVe-nd8QH8_tQHy2Ud2obqMwPTAq-DGbiCR6AEJILPC0BF1zlUq4uHKuGrOb8nsW_wQq0U0o",
+      price: 79000,
+      oldPrice: 99000,
+      save: 20000,
+    },
+    {
+      brand: "SONY",
+      name: "Tai nghe Sony MDR-EX15APBZE (Đen)",
+      image: "https://lh3.googleusercontent.com/taW9LHDD0RYxp8FW_17e8js-SY2QmdL4ysqu8BFUObyCWZ-qKkQyx3LGGRO5llrWqim7GPw138UmyKZr8pmMXKN6q1Tstj8",
+      price: 179000,
+      oldPrice: 199000,
+      save: 20000,
+    },
+    {
+      brand: "SONY",
+      name: "Tai nghe không dây in-ear Sony WI-C100/BZ E (Đen)",
+      image: "https://lh3.googleusercontent.com/CdpFW3wv5aR64bDFqpo0xMGfuCgdLhvRds8VmjfVF004ORZiw9AWTcdeeAeuY5zR_iPlcglcOaXci8OJOGAbxiJ-bvM5rFKK",
+      price: 490000,
+      oldPrice: 590000,
+      save: 100000,
+    },
+    {
+      brand: "BASEUS",
+      name: "Tai nghe không dây chàng đầu Baseus Bowie H1s (Đen)",
+      image: "https://lh3.googleusercontent.com/y_ZugiE04k__i8I-CnnIboxJ9ovsHsxjmjeCwWtxew33ls-ngoUsEggBS5WaMUx1xtAkmYBtcrS3tMHHBsvOR8CKtLB8gEj-",
+      price: 599000,
+      oldPrice: 1190000,
+      save: 591000,
+    },
+    {
+      brand: "NEWMEN",
+      name: "Bàn phím cơ Gaming có dây Newmen GM328 Plus...",
+      image: "https://lh3.googleusercontent.com/08UEwi-Kxu9R6j2QDIfu5fwCYlZEWd3OfDhsGb0dqUy6WWWQwA2XWco6GtiV5oMo46oa5qVlZJjtX7dayKxJ9bTpk97It6fMxw",
+      price: 899000,
+      oldPrice: 1490000,
+      save: 591000,
+    },
+  ],
+  monitor: [
+    {
+      brand: "HKC",
+      name: "Màn hình LCD HKC 21.45 inch MB21V13-U Full HD...",
+      image: "https://lh3.googleusercontent.com/mTzFWdHT3ng9aidtnJ5L1jRA7r3fXzu6LMX1nI4nWRRnqZKANggUFtUYqsrUa4MTFhFWS8pOvMEomjvQ1CE4X0Gqswv_4Oo",
+      price: 1290000,
+      oldPrice: 1590000,
+      save: 300000,
+    },
+    {
+      brand: "SAMSUNG",
+      name: "Màn hình LCD Samsung 24 inch LS24C366EAEXXV...",
+      image: "https://lh3.googleusercontent.com/rOsQqCn0PutM5MJi5TjDUlGXLDSQDypXDnSCyrC0lrKeqkNqR8taZ30SX9HtWmKDAsUuK2WqiI9i_lMx0H46_6OYBggTf5U",
+      price: 2319000,
+      oldPrice: 2790000,
+      save: 471000,
+    },
+    {
+      brand: "MSI",
+      name: "Màn hình LCD MSI 27 inch MP273Q E7 2K IPS...",
+      image: "https://lh3.googleusercontent.com/K-V33S65gOwdVpXmUUbZUPyIhsdhBG-KJzfm_Sw9qAKJPsmsaLZnnJqbeAcsrYe09QQbpestcJsDp-n643wZlSog2wn2agY-",
+      price: 2790000,
+      oldPrice: 3390000,
+      save: 600000,
+    },
+    {
+      brand: "HKC",
+      name: "Màn hình LCD HKC 24.5 inch MG25H320 320Hz...",
+      image: "https://lh3.googleusercontent.com/31L3XtfZF6twuj9a24mBzg3RxEa4p_ImT9VwW3PUAYOFNR_6NyyMHl7B7zwT_ZxRl2IXM_GI8dAR4FHPDo9A4PJQYdpE0UPJKg",
+      price: 3190000,
+      oldPrice: 3790000,
+      save: 600000,
+    },
+    {
+      brand: "DELL",
+      name: "Màn hình LCD Dell 27 inch S2721HN IPS 75Hz...",
+      image: "https://lh3.googleusercontent.com/owHUaMSMCaDB53HMdrQmiv17OR8T51xiQQ0yWE323xFjdTE7vx54dvoit6Wq3KbTloPlG2nAuaWlyzNJYWWp5LZG9eVhSDE",
+      price: 3990000,
+      oldPrice: 4590000,
+      save: 600000,
+    },
+  ],
+  printer: [
+    {
+      brand: "EPSON",
+      name: "Mực in phun EPSON Ecotank 003 BK C13T00V100",
+      image: "https://lh3.googleusercontent.com/jxifeOcquFPM8YjaRY_PAAzdJ_c_DUERIxVNJPtJGMlXuM-rrgxEpI6k51aX00sRI_zSaA5HWJJsPhF5AIM",
+      price: 169000,
+      oldPrice: 199000,
+      save: 30000,
+    },
+    {
+      brand: "CANON",
+      name: "Mực in Canon PG 89",
+      image: "https://lh3.googleusercontent.com/pN4z1sCyJeKERyWLp4hpq-knIjr4Qiyi1HhMt9km_XSJ_d20X6xbLLwkI6zaWrkogSkoJ-zLneOnMoASJw",
+      price: 399000,
+      oldPrice: 469000,
+      save: 70000,
+    },
+    {
+      brand: "BROTHER",
+      name: "Máy in nhãn cầm tay Brother P-Touch PT-E110",
+      image: "https://lh3.googleusercontent.com/690rbDXqKxYDSZ13Nswn1xmipD4qnO5STe1G501OaEX-dxbe_Hm8q0KQjbOv1PyOXaukBbrhay6Z3Xc4CrI",
+      price: 1090000,
+      oldPrice: 1290000,
+      save: 200000,
+    },
+    {
+      brand: "CANON",
+      name: "Máy in Canon G1010",
+      image: "https://lh3.googleusercontent.com/p8JSZvTWwLr04un4_nzKBXkErAWLuFODQrN2CGVmSRBAJ6iYwM8ihJxa6iUzPMQPMZWcJMhSpztxKiNzxQs",
+      price: 2390000,
+      oldPrice: 2990000,
+      save: 600000,
+    },
+    {
+      brand: "HP",
+      name: "Máy in HP Laser 108a 4ZB79A",
+      image: "https://lh3.googleusercontent.com/8ug0tb3Dj1OPef50IFSCfZX_RLcIzaRXa0g-9h_CWdCiAoRFKVe2Sfow4hbpFdkXs5vU6VzLS_H_BTGjng5MPiHJff-nhzQ",
+      price: 2790000,
+      oldPrice: 3290000,
+      save: 500000,
+    },
+  ],
+  camera: [
+    {
+      brand: "XIAOMI",
+      name: "Bao chống nước Xiaomi Mi Action Camera 4K",
+      image: "https://lh3.googleusercontent.com/DRpE9S-tw8LLO93Ha5WnYaQFK-gkJjNJ6FNux0kEz7HrusBvsOfZw5JSSRotYouo6klPwSym_aNpRkTyMQ_1RpYymfnxrKfq",
+      price: 99000,
+      oldPrice: 199000,
+      save: 100000,
+    },
+    {
+      brand: "XIAOMI",
+      name: "Gậy chống rung Camera Xiaomi BGX4020GL",
+      image: "https://lh3.googleusercontent.com/OKpsaTtFzTx6JQhszOSvCiqX8xftU7szUlbx7YHcJXsSTyXYYjMaY7TLahLB6q2r2f29RayT12381i8jcZQZUofSrsl44QA",
+      price: 450000,
+      oldPrice: 799000,
+      save: 349000,
+    },
+    {
+      brand: "GOPRO",
+      name: "Gậy đa năng GoPro 3-Way Grip Arm Tripod",
+      image: "https://lh3.googleusercontent.com/2D-SE4U7HWhVs0PYWbadSfmmdnZX7w6YEq9b3mRxUDS_qJ6qV22rUoU6U_lIFD-t2CEHpbqvA3VhLx2Y3R_zP22CwOqISJg",
+      price: 450000,
+      oldPrice: 999000,
+      save: 549000,
+    },
+    {
+      brand: "A4TECH",
+      name: "Webcam A4Tech PK 910H 1080P FHD",
+      image: "https://lh3.googleusercontent.com/IAp6sh7f8o1uWjbMibnRzoNfcyaF1d5gFhcE38fK-BUPJKEMagL065Jm-pVM4NylB3PZkPZitzLLJHtH-E9plOW7Jzryz6g_",
+      price: 639000,
+      oldPrice: 990000,
+      save: 351000,
+    },
+    {
+      brand: "HTC",
+      name: "Kính thực tế ảo HTC Vive Focus Plus",
+      image: "https://lh3.googleusercontent.com/7DD0Op0enkKr9kTrnnCGktGL6I5vhTo5psRrnYfkVgEYu9W9w1AKECpDD-0FC4ilMekV2vNXXam1wYQRoxwf",
+      price: 4990000,
+      oldPrice: 8990000,
+      save: 4000000,
+    },
+  ],
+};
+
+let activeFlashSaleKey = "laptop";
+
+function salePercent(product) {
+  if (!product.oldPrice || product.oldPrice <= product.price) return "";
+  return `-${Math.round((1 - product.price / product.oldPrice) * 100)}%`;
+}
+
+function flashSaleCard(product) {
+  const discount = salePercent(product);
+  return `
+    <article class="product-card">
+      <button class="heart" type="button" aria-label="${uiText("Yêu thích", "Add to wishlist")}">♡</button>
+      <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy">
+      <span class="save-label">${uiText("TIẾT KIỆM", "SAVE")} ${escapeHtml(formatVnd(product.save))}</span>
+      <b>${escapeHtml(product.brand)}</b>
+      <h3>${escapeHtml(compactText(product.name, 74))}</h3>
+      <strong>${escapeHtml(formatVnd(product.price))}</strong>
+      <span class="sale-old-price"><del>${escapeHtml(formatVnd(product.oldPrice))}</del>${discount ? `<i class="sale-percent">${discount}</i>` : ""}</span>
+      <button type="button">${uiText("Thêm vào giỏ", "Add to cart")}</button>
+    </article>
+  `;
+}
+
+function renderFlashSaleProducts(key = activeFlashSaleKey) {
+  const row = document.querySelector("[data-sale-products]");
+  if (!row) return;
+  activeFlashSaleKey = flashSaleProducts[key] ? key : "laptop";
+  row.innerHTML = flashSaleProducts[activeFlashSaleKey].map(flashSaleCard).join("");
+}
+
+function setupFlashSaleTabs() {
+  const tabs = [...document.querySelectorAll("[data-sale-tab]")];
+  if (!tabs.length) return;
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((item) => {
+        const active = item === tab;
+        item.classList.toggle("active", active);
+        item.setAttribute("aria-selected", active ? "true" : "false");
+      });
+      renderFlashSaleProducts(tab.dataset.saleTab);
+    });
+  });
+  renderFlashSaleProducts(activeFlashSaleKey);
 }
 
 function productSearchText(product) {
@@ -2050,6 +2313,7 @@ function applyLanguage(language) {
   translateAttributes(language);
   updateLanguageButton(language);
   updateLanguageDecorations(language);
+  renderFlashSaleProducts(activeFlashSaleKey);
   if (catalogState.products.length) {
     renderCatalogProducts();
   } else {
@@ -2064,4 +2328,5 @@ languageButton?.addEventListener("click", () => {
   applyLanguage(currentLanguage === "vi" ? "en" : "vi");
 });
 
+setupFlashSaleTabs();
 applyLanguage(currentLanguage);
