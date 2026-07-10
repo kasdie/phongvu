@@ -39,6 +39,8 @@ function textFor(language, viText, enText) {
 
 export function inferCategoryFromText(text) {
   const normalized = normalizeText(text);
+  if (hasAnyKeyword(normalized, ["mac", "macbook", "mac mini", "imac", "iphone", "ipad", "apple"])) return "san-pham-apple";
+  if (hasAnyKeyword(normalized, ["laptop", "may tinh xach tay"])) return "laptop";
   const rules = [
     ["san-pham-apple", ["mac", "macbook", "mac mini", "imac", "iphone", "ipad", "apple"]],
     ["may-tinh-de-ban", ["pc", "may tinh ban", "desktop pc", "build pc"]],
@@ -165,6 +167,42 @@ function getFullSpecValue(product, aliases = []) {
     .find((item) => normalizedAliases.some((alias) => item.name === alias || item.name.includes(alias)))?.value || "";
 }
 
+function isLaptopProduct(product) {
+  const searchText = productSearchText(product);
+  return product.categorySlug === "laptop" || hasAnyKeyword(searchText, ["laptop", "may tinh xach tay"]);
+}
+
+function hasDedicatedLaptopGpu(product) {
+  if (!isLaptopProduct(product)) return false;
+  const graphicsText = normalizeText([
+    getFullSpecValue(product, ["chip do hoa", "vga", "card do hoa", "gpu"]),
+    product.name,
+    product.description,
+    product.keySpecs,
+  ].join(" "));
+  const hasDedicated = hasAnyKeyword(graphicsText, [
+    "rtx",
+    "gtx",
+    "geforce",
+    "radeon rx",
+    "arc a",
+    "arc b",
+    "nvidia",
+  ]);
+  return hasDedicated;
+}
+
+function inferLaptopUseTypeFromText(text) {
+  const normalized = normalizeText(text);
+  if (hasAnyKeyword(normalized, ["gaming", "choi game", "rtx", "gtx", "vga roi", "card roi", "card do hoa roi"])) {
+    return "gaming";
+  }
+  if (hasAnyKeyword(normalized, ["van phong", "office", "mong nhe", "sinh vien", "hoc tap", "excel", "khong card roi", "khong vga roi"])) {
+    return "office";
+  }
+  return "";
+}
+
 function productComparisonSpecs(product, language = "vi") {
   return {
     warranty: getFullSpecValue(product, ["bao hanh", "warranty"]) || textFor(language, "Theo catalog", "According to catalog"),
@@ -248,6 +286,13 @@ function scoreProduct(product, query, options = {}) {
   const wantsMousepad = hasAnyKeyword(normalizedQuery, ["lot chuot", "mousepad", "mouse mat"]);
   const isMousepad = hasAnyKeyword(productName, ["lot chuot", "tam lot chuot", "mieng lot chuot", "mousepad", "mouse mat"]);
   if (wantsMouse && !wantsMousepad && isMousepad) score -= 8;
+
+  const laptopUseType = inferLaptopUseTypeFromText(`${query} ${options.need || ""}`);
+  if (laptopUseType && isLaptopProduct(product)) {
+    const hasDedicatedGpu = hasDedicatedLaptopGpu(product);
+    if (laptopUseType === "gaming") score += hasDedicatedGpu ? 10 : -10;
+    if (laptopUseType === "office") score += hasDedicatedGpu ? -8 : 8;
+  }
 
   if (options.category && product.categorySlug === options.category) score += 8;
   if (product.availability === "InStock") score += 4;
@@ -401,6 +446,7 @@ export function searchCatalog(products, { message = "", context = {}, limit = 4 
   const category = messageCategory || inferCategoryFromText(query) || context.currentCategory || "";
   const budget = context.budgetRange || parseBudgetFromText(query);
   const need = context.userNeed || inferNeedFromText(query, language);
+  const laptopUseType = inferLaptopUseTypeFromText(query);
   const shortlistedSkus = Array.isArray(context.shortlistedProductSkus) ? context.shortlistedProductSkus : [];
   const viewedSkus = Array.isArray(context.viewedProductSkus) ? context.viewedProductSkus : [];
   const compareSkus = [...new Set(shortlistedSkus.length ? shortlistedSkus : viewedSkus)];
@@ -412,6 +458,8 @@ export function searchCatalog(products, { message = "", context = {}, limit = 4 
         return compareSkus.includes(product.sku);
       }
       if (category && product.categorySlug !== category) return false;
+      if (category === "laptop" && laptopUseType === "gaming" && !hasDedicatedLaptopGpu(product)) return false;
+      if (category === "laptop" && laptopUseType === "office" && hasDedicatedLaptopGpu(product)) return false;
       if (budget && !isProductInBudget(product, budget, true)) return false;
       return true;
     })

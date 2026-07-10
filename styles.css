@@ -3349,6 +3349,117 @@ body.assistant-split-open .sales-agent-pane {
   display: none;
 }
 
+/* Stable storefront card and floating-contact layout */
+.countdown {
+  justify-content: center;
+}
+
+.countdown b {
+  width: 42px;
+  font-variant-numeric: tabular-nums;
+}
+
+.product-card {
+  display: flex;
+  flex-direction: column;
+  align-content: initial;
+  min-height: 520px;
+}
+
+.blue-shelf .product-card {
+  min-height: 470px;
+}
+
+.product-card > img {
+  flex: 0 0 126px;
+}
+
+.product-card h3 {
+  min-height: 46px;
+  padding-right: 38px;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.product-card .heart,
+.blue-shelf .product-card .heart {
+  top: 214px;
+  right: 18px;
+  z-index: 3;
+}
+
+.product-card button:last-child {
+  width: 100%;
+  margin-top: auto;
+  flex: 0 0 auto;
+}
+
+.laptop-type {
+  width: fit-content;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: #eef4ff;
+  color: #075eff;
+  font-size: 10px;
+  line-height: 1.1;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.laptop-gaming .laptop-type {
+  background: #fff0e8;
+  color: #f05a1a;
+}
+
+.contact-float {
+  right: 22px;
+  bottom: 104px;
+  grid-auto-flow: row;
+  grid-auto-rows: max-content;
+  gap: 18px;
+  justify-items: center;
+  align-items: center;
+  z-index: 70;
+  pointer-events: none;
+}
+
+.contact-float a,
+.contact-float .assistant-link,
+.contact-float b {
+  pointer-events: auto;
+}
+
+.contact-float .phone-link {
+  min-height: 46px;
+  align-items: center;
+  padding: 0 14px;
+  border-radius: 999px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, .14);
+}
+
+.contact-float a:not(.phone-link) {
+  width: 54px;
+  height: 54px;
+}
+
+.contact-float .assistant-link {
+  width: 72px;
+  height: 72px;
+}
+
+.contact-float b {
+  margin-top: -6px;
+}
+
+.chat-message,
+.recommendation-card,
+.chat-comparison {
+  position: relative;
+  z-index: 0;
+}
+
 @media (max-width: 1180px) {
   .catalog-results {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -3358,6 +3469,27 @@ body.assistant-split-open .sales-agent-pane {
 @media (max-width: 900px) {
   body.assistant-split-open .page-shell {
     width: 100%;
+  }
+
+  .contact-float {
+    right: 14px;
+    bottom: 82px;
+    gap: 14px;
+  }
+
+  .contact-float .phone-link {
+    min-height: 42px;
+    font-size: 16px;
+  }
+
+  .contact-float a:not(.phone-link) {
+    width: 50px;
+    height: 50px;
+  }
+
+  .contact-float .assistant-link {
+    width: 64px;
+    height: 64px;
   }
 
   .sales-agent-pane {

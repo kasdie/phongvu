@@ -33,7 +33,7 @@ const slides = [
 const categoryMenus = {
   laptop: [
     ["Thương hiệu", "Apple (Macbook)", "Acer", "ASUS", "Dell", "HP", "Lenovo", "LG Gram", "MSI", "Gigabyte"],
-    ["Nhu cầu", "Laptop Gaming", "Laptop AI", "Laptop đồ họa", "Laptop Sinh viên", "Laptop Văn Phòng", "Laptop cảm ứng 2 in 1", "Laptop mỏng nhẹ", "Laptop Doanh nhân"],
+    ["Nhu cầu", "Laptop Văn Phòng", "Laptop Gaming", "Laptop đồ họa", "Laptop Sinh viên", "Laptop cảm ứng 2 in 1", "Laptop mỏng nhẹ", "Laptop Doanh nhân"],
     ["Cấu hình", "Laptop i5", "Laptop i7", "Laptop i9", "Laptop Ryzen 5", "Laptop Ryzen 7", "Laptop Ultra 5", "Laptop Ultra 7", "Laptop Ultra 9"],
     ["Laptop Lenovo", "Lenovo Legion", "Lenovo LOQ", "Lenovo IdeaPad", "Lenovo ThinkBook", "Lenovo ThinkPad", "Lenovo Yoga"],
     ["Laptop ASUS", "ASUS TUF Gaming", "ASUS ROG Gaming", "ASUS Vivobook", "ASUS Zenbook", "Asus ExpertBook"],
@@ -219,6 +219,8 @@ const englishText = {
   "Giảm Sốc Đến 55%": "Up to 55% off",
   "*Giới hạn 01 sản phẩm / 1 khách hàng trong chương trình": "*Limit 01 product / 1 customer during this program",
   "Kết thúc sau 2 ngày": "Ends in 2 days",
+  "Kết thúc sau 4 ngày": "Ends in 4 days",
+  "Kết thúc trong hôm nay": "Ends today",
   "Đếm ngược flash sale": "Flash sale countdown",
   "Số lượng có hạn": "Limited quantity",
   "Mua ngay kẻo hết": "Buy now before it ends",
@@ -283,6 +285,8 @@ const englishText = {
   "Hè 2K8 show điểm giảm sâu": "2K8 summer deep-discount show",
   "Build PC giảm thêm tới 2 triệu": "Build PC, save up to 2 million VND",
   "Laptop Gaming RTX 4050 chỉ từ 24.990 triệu": "RTX 4050 gaming laptops from 24.990M VND",
+  "Laptop văn phòng": "Office laptop",
+  "Laptop gaming": "Gaming laptop",
   "iPhone 17 Pro Max chỉ từ 35.990 triệu": "iPhone 17 Pro Max from 35.990M VND",
   "Màn hình OLED giá chỉ từ 12 triệu": "OLED monitors from 12M VND",
   "Tivi chuẩn nét giảm đến 50%": "Crisp TV deals up to 50% off",
@@ -724,6 +728,37 @@ document.querySelector(".back-top")?.addEventListener("click", () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
+const flashCountdownLabel = document.querySelector("[data-flash-countdown-label]");
+const flashCountdownBoxes = [...document.querySelectorAll(".flash-sale-section .countdown b")];
+const flashSaleDurationMs = 4.5 * 24 * 60 * 60 * 1000;
+const flashSaleEpochMs = Date.UTC(2026, 0, 1, 0, 0, 0);
+
+function updateFlashCountdown() {
+  if (!flashCountdownBoxes.length) return;
+
+  const elapsed = ((Date.now() - flashSaleEpochMs) % flashSaleDurationMs + flashSaleDurationMs) % flashSaleDurationMs;
+  const remaining = Math.max(0, flashSaleDurationMs - elapsed);
+  const totalSeconds = Math.floor(remaining / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const values = [days, hours, minutes, seconds];
+
+  flashCountdownBoxes.forEach((box, index) => {
+    box.textContent = String(values[index] || 0).padStart(2, "0");
+  });
+
+  if (flashCountdownLabel) {
+    flashCountdownLabel.textContent = days > 0
+      ? uiText(`Kết thúc sau ${days} ngày`, `Ends in ${days} day${days === 1 ? "" : "s"}`)
+      : uiText("Kết thúc trong hôm nay", "Ends today");
+  }
+}
+
+updateFlashCountdown();
+window.setInterval(updateFlashCountdown, 1000);
+
 const headerSearchForm = document.querySelector(".search-form");
 const assistantToggle = document.querySelector(".assistant-toggle");
 const assistantPanel = document.querySelector("#assistantChatPanel");
@@ -863,6 +898,49 @@ function getSpecValue(product, aliases = []) {
     .find((item) => normalizedAliases.includes(item.name))?.value || "";
 }
 
+function isLaptopProduct(product) {
+  const searchText = productSearchText(product);
+  return product.categorySlug === "laptop" || hasAnyCatalogKeyword(searchText, ["laptop", "may tinh xach tay"]);
+}
+
+function hasDedicatedLaptopGpu(product) {
+  if (!isLaptopProduct(product)) return false;
+  const graphicsText = normalizeCatalogText([
+    getSpecValue(product, ["chip do hoa", "vga", "card do hoa", "gpu"]),
+    product.name,
+    product.description,
+    product.keySpecs,
+  ].join(" "));
+  const hasDedicated = hasAnyCatalogKeyword(graphicsText, [
+    "rtx",
+    "gtx",
+    "geforce",
+    "radeon rx",
+    "arc a",
+    "arc b",
+    "nvidia",
+  ]);
+  return hasDedicated;
+}
+
+function inferLaptopUseTypeFromText(text) {
+  const normalized = normalizeCatalogText(text);
+  if (hasAnyCatalogKeyword(normalized, ["gaming", "choi game", "rtx", "gtx", "vga roi", "card roi", "card do hoa roi"])) {
+    return "gaming";
+  }
+  if (hasAnyCatalogKeyword(normalized, ["van phong", "office", "mong nhe", "sinh vien", "hoc tap", "excel", "khong card roi", "khong vga roi"])) {
+    return "office";
+  }
+  return "";
+}
+
+function laptopTypeLabel(product) {
+  if (!isLaptopProduct(product)) return "";
+  return hasDedicatedLaptopGpu(product)
+    ? uiText("Laptop gaming", "Gaming laptop")
+    : uiText("Laptop văn phòng", "Office laptop");
+}
+
 function formatCatalogDate(value) {
   if (!value) return "Chưa có";
   const date = new Date(value);
@@ -926,6 +1004,8 @@ function isCatalogIntent(text) {
 
 function inferCategoryFromText(text) {
   const normalized = normalizeCatalogText(text);
+  if (hasAnyCatalogKeyword(normalized, ["mac", "macbook", "mac mini", "imac", "iphone", "ipad", "apple"])) return "san-pham-apple";
+  if (hasAnyCatalogKeyword(normalized, ["laptop", "may tinh xach tay"])) return "laptop";
   const rules = [
     ["san-pham-apple", ["mac", "macbook", "mac mini", "imac", "iphone", "ipad", "apple"]],
     ["may-tinh-de-ban", ["pc", "may tinh ban", "desktop pc", "build pc"]],
@@ -1041,6 +1121,13 @@ function scoreProduct(product, query, options = {}) {
   const isMousepad = hasAnyCatalogKeyword(productName, ["lot chuot", "tam lot chuot", "mieng lot chuot", "mousepad", "mouse mat"]);
   if (wantsMouse && !wantsMousepad && isMousepad) score -= 8;
 
+  const laptopUseType = inferLaptopUseTypeFromText(`${query} ${options.need || ""}`);
+  if (laptopUseType && isLaptopProduct(product)) {
+    const hasDedicatedGpu = hasDedicatedLaptopGpu(product);
+    if (laptopUseType === "gaming") score += hasDedicatedGpu ? 10 : -10;
+    if (laptopUseType === "office") score += hasDedicatedGpu ? -8 : 8;
+  }
+
   if (options.category && product.categorySlug === options.category) score += 8;
   if (product.availability === "InStock") score += 4;
   if (catalogState.shortlistedSkus.has(product.sku)) score += 2;
@@ -1062,9 +1149,12 @@ function filterCatalogProducts() {
   const category = queryCategory || catalogState.selectedCategory;
   const query = catalogState.query;
   const normalizedQuery = normalizeCatalogText(query);
+  const laptopUseType = inferLaptopUseTypeFromText(query || catalogState.userNeed);
 
   let products = catalogState.products.filter((product) => {
     if (category && product.categorySlug !== category) return false;
+    if (category === "laptop" && laptopUseType === "gaming" && !hasDedicatedLaptopGpu(product)) return false;
+    if (category === "laptop" && laptopUseType === "office" && hasDedicatedLaptopGpu(product)) return false;
     if (budget && !isProductInBudget(product, budget, true)) return false;
     if (!normalizedQuery) return true;
     return scoreProduct(product, query, { category, budget, need: catalogState.userNeed }) > 0;
@@ -1220,12 +1310,14 @@ function renderCatalogProducts() {
 
   catalogResults.innerHTML = products.map((product) => {
     const specs = productKeySpecs(product, 3).map((spec) => `<p>${escapeHtml(compactText(spec, 84))}</p>`).join("");
+    const laptopBadge = laptopTypeLabel(product);
     return `
       <article class="catalog-product-card${catalogState.focusedSku === product.sku ? " is-focused" : ""}" data-sku="${escapeHtml(product.sku)}">
         <img src="${escapeHtml(product.image || "assets/images/logos/logo.svg")}" alt="${escapeHtml(product.name)}" loading="lazy">
         <div class="catalog-card-meta">
           <span class="product-badge">${escapeHtml(product.brand || "Phong Vũ")}</span>
           <span class="product-badge">${escapeHtml(availabilityLabel(product))}</span>
+          ${laptopBadge ? `<span class="product-badge">${escapeHtml(laptopBadge)}</span>` : ""}
         </div>
         <h3>${escapeHtml(compactText(product.name, 82))}</h3>
         <strong>${escapeHtml(product.priceFormatted || formatVnd(product.price))}</strong>
