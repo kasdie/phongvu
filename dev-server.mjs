@@ -100,7 +100,10 @@ async function handleApi(req, res, pathname) {
 }
 
 function serveStatic(req, res, pathname) {
-  const requested = pathname === "/" ? "/index.html" : decodeURIComponent(pathname);
+  const routeMap = {
+    "/cart": "/cart.html",
+  };
+  const requested = pathname === "/" ? "/index.html" : (routeMap[pathname] || decodeURIComponent(pathname));
   const filePath = resolve(root, `.${requested}`);
 
   if (!filePath.startsWith(root) || !existsSync(filePath) || statSync(filePath).isDirectory()) {
