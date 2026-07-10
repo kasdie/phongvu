@@ -1901,6 +1901,13 @@ button {
   font-size: 28px;
 }
 
+.featured-grid span img {
+  display: block;
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+
 .wide-promo {
   margin-top: 26px;
   height: 134px;
