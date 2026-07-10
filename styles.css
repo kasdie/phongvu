@@ -1957,7 +1957,8 @@ button {
 .image-side-ad img {
   display: block;
   width: 151px;
-  height: 351px;
+  height: auto;
+  max-height: 351px;
   object-fit: contain;
 }
 
@@ -3463,6 +3464,31 @@ body.assistant-split-open .sales-agent-pane {
   margin-top: -6px;
 }
 
+.image-side-ad {
+  --side-ad-top: clamp(356px, 39vh, 418px);
+  position: fixed;
+  top: var(--side-ad-top);
+  bottom: auto;
+  width: 151px;
+  height: auto;
+  max-height: calc(100vh - var(--side-ad-top) - 24px);
+  z-index: 24;
+}
+
+.image-side-ad.left {
+  left: max(18px, calc((100vw - 1200px) / 2 - 181px));
+}
+
+.image-side-ad.right {
+  right: max(190px, calc((100vw - 1200px) / 2 - 151px));
+}
+
+.image-side-ad img {
+  width: 100%;
+  height: auto;
+  max-height: inherit;
+}
+
 .flash-sale-section {
   border: 1px solid rgba(255, 190, 82, .78);
   border-radius: 0;
@@ -3653,6 +3679,12 @@ body.assistant-split-open .sales-agent-pane {
 @media (max-width: 1180px) {
   .catalog-results {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1740px), (max-height: 760px) {
+  .image-side-ad {
+    display: none;
   }
 }
 
