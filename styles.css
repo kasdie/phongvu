@@ -3810,3 +3810,155 @@ body.assistant-split-open .sales-agent-pane {
     padding: 12px;
   }
 }
+
+/* PhongVu desktop proportion lock */
+html,
+body,
+.page-shell {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+@media (min-width: 1041px) {
+  .container {
+    width: min(1208px, calc(100% - 32px));
+  }
+
+  .art-banner,
+  .art-banner img {
+    height: 57px;
+    min-height: 57px;
+  }
+
+  .utility-scroll {
+    min-height: 43px;
+    font-size: 13px;
+  }
+
+  .utility-links {
+    gap: 26px;
+    padding-left: 34px;
+    padding-right: 86px;
+  }
+
+  .site-header {
+    min-height: 112px;
+  }
+
+  .header-layout {
+    min-height: 112px;
+    grid-template-columns: 260px minmax(0, 530px) minmax(330px, 1fr);
+    gap: 16px;
+    padding-block: 0;
+  }
+
+  .header-layout > .category-button {
+    display: none;
+  }
+
+  .image-brand {
+    width: 260px;
+    height: 64px;
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .image-brand img {
+    width: 42px;
+    height: 42px;
+    max-width: none;
+    max-height: none;
+  }
+
+  .image-brand::after {
+    content: "PHONGVU.VN";
+    color: #1433c6;
+    font-size: 25px;
+    line-height: 1;
+    font-weight: 900;
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+
+  .search-form {
+    height: 42px;
+  }
+
+  .account-actions {
+    grid-template-columns: 128px 42px minmax(145px, 1fr);
+    gap: 24px;
+    font-size: 13px;
+  }
+
+  .main-content {
+    padding-top: 16px;
+  }
+
+  .hero-layout {
+    grid-template-columns: 184px minmax(0, 1fr) 184px;
+    gap: 16px;
+    align-items: start;
+  }
+
+  .category-menu {
+    min-height: 428px;
+    max-height: 428px;
+    padding-block: 4px;
+    overflow: hidden;
+  }
+
+  .category-menu a {
+    height: 28px;
+    min-height: 28px;
+    padding-inline: 8px;
+    font-size: 12px;
+    line-height: 28px;
+  }
+
+  .mega-menu {
+    left: 200px;
+    min-height: 428px;
+  }
+
+  .main-slider {
+    height: 282px;
+    border-radius: 8px;
+  }
+
+  .mini-promo-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .mini-promo {
+    height: 127px;
+  }
+
+  .right-banner-list {
+    gap: 38px;
+  }
+
+  .vertical-banner {
+    height: 204px;
+    border-radius: 8px;
+  }
+
+  .hot-deals {
+    margin-top: 22px;
+  }
+
+  .contact-float {
+    right: 32px;
+    bottom: 82px;
+  }
+
+  .image-side-ad.left {
+    left: max(18px, calc((100vw - 1208px) / 2 - 183px));
+  }
+
+  .image-side-ad.right {
+    right: max(188px, calc((100vw - 1208px) / 2 - 151px));
+  }
+}
