@@ -150,9 +150,10 @@ button {
 
 .utility-scroll {
   min-height: 43px;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
   position: relative;
-  justify-content: center;
   align-items: center;
   overflow: visible;
   font-size: 13px;
@@ -174,7 +175,7 @@ button {
   justify-content: flex-start;
   gap: 18px;
   padding-left: 34px;
-  padding-right: 86px;
+  padding-right: 0;
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -201,11 +202,9 @@ button {
 }
 
 .language-toggle {
-  position: absolute;
-  right: 0;
-  top: 50%;
+  position: static;
   z-index: 2;
-  transform: translateY(-50%);
+  transform: none;
   height: 28px;
   display: inline-flex;
   align-items: center;
@@ -219,6 +218,7 @@ button {
   font-weight: 900;
   line-height: 1;
   white-space: nowrap;
+  justify-self: end;
 }
 
 .language-toggle span {
@@ -2325,7 +2325,7 @@ body {
 
   .utility-links {
     justify-content: flex-start;
-    padding-right: 86px;
+    padding-right: 0;
   }
 
   .product-card:hover,
@@ -3838,7 +3838,7 @@ body,
   .utility-links {
     gap: 26px;
     padding-left: 34px;
-    padding-right: 86px;
+    padding-right: 0;
   }
 
   .site-header {
